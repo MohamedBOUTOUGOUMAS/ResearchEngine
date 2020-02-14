@@ -1,5 +1,6 @@
 package main.controller;
 import main.multiThreading.MatchingBook;
+import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.Position;
 import main.service.utils.ResearchResult;
@@ -57,15 +58,20 @@ public class HomeController {
     }
 
     @GetMapping("/search/book")
-    public ArrayList<String> getBook(@RequestParam String fileName) {
+    public Book getBook(@RequestParam String fileName) {
         BufferedReader lecteurAvecBuffer;
-        ArrayList<String> book = new ArrayList<>();
-
+        Book book = new Book(fileName);
         try {
             lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+fileName));
             String line;
+            boolean findTitle = false;
+            boolean findAuthor = false;
+            boolean findReleaseDate = false;
             while ((line = lecteurAvecBuffer.readLine()) != null) {
-                book.add(line);
+                if (!findTitle) findTitle = Helper.decorateBookWithTitle(line, book, findTitle);
+                if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(line, book, findAuthor);
+                if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(line, book, findReleaseDate);
+                book.content.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
