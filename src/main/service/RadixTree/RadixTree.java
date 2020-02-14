@@ -93,17 +93,17 @@ public class RadixTree {
 			boolean findAuthor = false;
 			boolean findReleaseDate = false;
 			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-				findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
-				findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
-				findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
+				if (!findTitle) findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
+				if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
+				if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
 				if (!ligne.equals("") && !ligne.equals("\n")) {
 					String[] array = ligne.split("[^a-zA-Z]");
 					if (array.length != 0) {
 						for (int i = 0; i < array.length; i++) {
 							String word = array[i];
 							if (!word.equals("") && !word.equals("\n")) {
-								int[] retenue = KMP.calculRetenue(word.toCharArray());
-								// int index = KMP.match_Fast(word.toCharArray(), ligne.toCharArray());
+								int[] retenue = {}; //= KMP.calculRetenue(word.toCharArray());
+								//int index = KMP.match_Fast(word.toCharArray(), ligne.toCharArray());
 								int index = KMP.match(word.toCharArray(), retenue, ligne.toCharArray());
 								Position pos = new Position(ligne, l, index);
 								this.insertWord(word, 0, pos);

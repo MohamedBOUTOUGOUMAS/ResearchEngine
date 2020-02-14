@@ -16,11 +16,11 @@ import main.service.utils.ResearchResult;
 
 public class Egrep {
 
-	public static ResearchResult matchAllWords(String word, String filePath){
-		ResearchResult researchResult;
+	public static ResearchResult matchAllWords(String word, String fileName){
+		String filePath = Helper.BOOKS_PATH+"/"+fileName;
 		ArrayList<Position> linesMatched = new ArrayList<>();
-		Book book = new Book(filePath);
-		String[] array = word.split("[^a-zA-Z]");
+		Book book = new Book(fileName);
+		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
 			RadixTree rt = new RadixTree();
 			rt.makeTree(filePath, book);
@@ -29,7 +29,7 @@ public class Egrep {
 				linesMatched.addAll(pos);
 				return new ResearchResult(book, linesMatched);
 			}
-		}
+		}*/
 
 		BufferedReader lecteurAvecBuffer;
 		try {
@@ -38,29 +38,32 @@ public class Egrep {
 			boolean findTitle = false;
 			boolean findAuthor = false;
 			boolean findReleaseDate = false;
+			int l = 1;
 			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-				findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
-				findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
-				findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
-				ArrayList<Position> p = matchLine(word, ligne);
-				if (p.size() > 0) linesMatched.addAll(p);
+				if (!findTitle) findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
+				if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
+				if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
+				ArrayList<Position> p = matchLine(word, ligne, l);
+				if (p.size() > 0) {
+					linesMatched.addAll(p);
+				}
+				l++;
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return new ResearchResult(book, linesMatched);
 	}
 
-	public static ArrayList<Position> matchLine(String word, String line) {
+	public static ArrayList<Position> matchLine(String word, String line, int nbLine) {
+
 		if (word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".")) {
 			//System.out.println("AEF : ");
 			RegEx regEx = new RegEx(word);
-			return regEx.aef.matchAll(line, 0);
+			return regEx.aef.matchAll(line, nbLine);
 		} else {
-				//System.out.println("KMP : ");
-			return KMP.matchAll(word.toCharArray(), KMP.calculRetenue(word.toCharArray()), line.toCharArray());
+			//System.out.println("KMP : ");
+			return KMP.matchAll(word.toCharArray(), line.toCharArray(), nbLine);
 		}
 	}
 }
