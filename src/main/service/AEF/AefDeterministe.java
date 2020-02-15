@@ -1,11 +1,6 @@
 package main.service.AEF;
 
 import main.service.utils.Position;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -255,7 +250,7 @@ public class AefDeterministe {
 			if(resMatch != -1) {
 				int index = ligne.indexOf(tmp);
 				String word = ligne.substring(index, index+resMatch);
-				Position p = new Position(ligne, l, index, index + resMatch, word);
+				Position p = new Position(ligne, l, index, (index + resMatch), word);
 				matchResult.add(p);
 				i += resMatch;
 			}

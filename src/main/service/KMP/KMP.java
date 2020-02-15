@@ -1,14 +1,7 @@
 package main.service.KMP;
 
 import main.service.utils.Position;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class KMP {
 

@@ -79,4 +79,9 @@ public class Helper {
         return false;
     }
 
+    public static boolean isRegEx(String word) {
+        if (word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".")) return true;
+        return false;
+    }
+
 }
