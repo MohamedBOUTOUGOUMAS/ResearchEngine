@@ -1,7 +1,12 @@
 package main.service.utils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Helper {
 
@@ -82,6 +87,15 @@ public class Helper {
     public static boolean isRegEx(String word) {
         if (word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".")) return true;
         return false;
+    }
+
+    public static String getPatternFromJson(String body){
+        JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
+        String pattern = null;
+        for (Map.Entry<String, JsonElement> e : payload.entrySet()){
+            pattern = e.getValue().getAsString();
+        }
+        return pattern;
     }
 
 }
