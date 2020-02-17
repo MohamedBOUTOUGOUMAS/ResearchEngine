@@ -10,6 +10,12 @@ public class Edge {
 		this.q = q;
 	}
 
+	public Edge(int p, int q, double dist) {
+		this.p = p;
+		this.q = q;
+		this.dist = dist;
+	}
+
 	public double dist() {
 		return dist;
 	}

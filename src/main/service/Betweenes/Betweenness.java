@@ -1,9 +1,15 @@
 package main.service.Betweenes;
 
+import main.service.utils.ResearchResult;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static main.service.Betweenes.Jaccard.getDistance;
 
 public class Betweenness {
 	
@@ -42,12 +48,12 @@ public class Betweenness {
 
 	}
 
-	public static float computeBeetweenes(Integer v, ArrayList<Edge> edges, FloydWarshall fw) {
-		int [][] paths = fw.calculShortestPaths(edges, nbPoints);
+	public static float computeBeetweenes(Integer v, ArrayList<Edge> edges, FloydWarshall fw, Integer nbPoints) {
+		//int [][] paths = fw.calculShortestPaths(edges, nbPoints);
 		float res = 0;
-		for(int i=0; i<nbPoints+1; i++) {
+		for(int i=0; i<nbPoints; i++) {
 			if(i==v) continue;
-			for(int j=0; j<nbPoints+1; j++) {
+			for(int j=0; j<nbPoints; j++) {
 				if(j==v || j==i) continue;
 				int cpt = 0;
 				ArrayList<ArrayList<Integer>> shortestPaths = fw.pathFinderMap(i,j);
@@ -62,19 +68,78 @@ public class Betweenness {
 		return res;
 	}
 
-	public static void main(String[] args) {
-		ArrayList<Edge> edges = read("TestsBeds/2025.nodup");
-		System.out.println(nbPoints);
+	public static ArrayList<ResearchResult> sortByBetweenes(List<ResearchResult> searchResult) {
+		ArrayList<ResearchResult> sortedResult;
+		ArrayList<Edge> edges;
+
+		// create all edges in the graph
+		HashMap<Integer, ResearchResult> hashedFiles = new HashMap<>();
+		for(int i = 0; i < searchResult.size(); i++) {
+			hashedFiles.put(i, searchResult.get(i));
+		}
+		edges = createGraph(hashedFiles);
+
+		// compute shortestPaths
 		FloydWarshall fw = new FloydWarshall();
-		int [][] paths = fw.calculShortestPaths(edges, nbPoints); 
-		/*for (int i = 0; i < nbPoints+1; i++) {
-			for (int j = 0; j < nbPoints+1; j++) {
+		fw.calculShortestPaths(edges, searchResult.size());
+
+		for (int i = 0; i < searchResult.size(); i++) {
+			for (int j = 0; j < searchResult.size(); j++) {
 				if(i==j) continue;
 				System.out.println(i+" "+j);
 				System.out.println(fw.pathFinderMap(i, j));
 			}
-		}*/
-		System.out.println("nb : "+computeBeetweenes(16, edges, fw));
+		}
+
+		// sort files by their betweenes
+		ArrayList<Integer> tmp = new ArrayList<>(hashedFiles.keySet());
+		Collections.sort(tmp, ((i1, i2) ->  {
+			float c1 = computeBeetweenes(i1, edges, fw, searchResult.size());
+			float c2 = computeBeetweenes(i2, edges, fw, searchResult.size());
+			if(c1 > c2) {
+				return -1;
+			} else if(c1 < c2) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}));
+		for (Integer i : tmp) {
+			System.out.println(i + " " +computeBeetweenes(i, edges, fw, searchResult.size()));
+		}
+		sortedResult = (ArrayList<ResearchResult>) tmp.stream()
+				.map(f -> hashedFiles.get(f))
+				.collect(Collectors.toList());
+
+		return sortedResult;
+	}
+
+	private static ArrayList<Edge> createGraph(HashMap<Integer, ResearchResult> searchResult) {
+		ArrayList<Edge> edges = new ArrayList<>();
+		double dist;
+
+		for (int i = 0; i < searchResult.keySet().size(); i++) {
+			for (int j = i+1; j < searchResult.keySet().size(); j++) {
+				dist = getDistance(searchResult.get(i).book.fileName, searchResult.get(j).book.fileName);
+				if(dist > 0.25) {
+					edges.add(new Edge(i, j, dist));
+				}
+			}
+		}
+
+		return edges;
+	}
+
+	public static void main(String[] args) throws Exception {
+		//ArrayList<Edge> edges = read("TestsBeds/2025.nodup");
+		// System.out.println(nbPoints);
+		String a[] = new String[] {"21-0.txt", "91-0.txt", "36-0.txt", "71-0.txt", "76-0.txt"};
+		ArrayList<String> searchResults = new ArrayList<>(asList(a));
+		//FloydWarshall fw = new FloydWarshall();
+		// TODO : clean up 'calculShortestPaths' method to return void
+		//int [][] paths = fw.calculShortestPaths(edges, nbPoints);
+
+		//System.out.println("nb : "+ sortByBetweenes(searchResults));
 	}
 
 }

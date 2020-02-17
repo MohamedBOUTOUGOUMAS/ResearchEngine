@@ -21,9 +21,9 @@ public class FloydWarshall {
 		paths = new int[nbPoints + 1][nbPoints + 1];
 
 		for (Edge edge : edges) {
-			dist[edge.p][edge.q] = Double.valueOf(1);
+			dist[edge.p][edge.q] = edge.dist();
 			paths[edge.p][edge.q] = edge.q;
-			dist[edge.q][edge.p] = Double.valueOf(1);
+			dist[edge.q][edge.p] = edge.dist();
 			paths[edge.q][edge.p] = edge.p;
 		}
 

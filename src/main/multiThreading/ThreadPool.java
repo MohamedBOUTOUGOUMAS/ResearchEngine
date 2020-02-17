@@ -40,6 +40,7 @@ public class ThreadPool {
                     try {
                         ResearchResult researchResult = futureMatched.get();
                         if (researchResult.positions.size() == 0) return null;
+                        System.out.println(researchResult.book.fileName);
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();

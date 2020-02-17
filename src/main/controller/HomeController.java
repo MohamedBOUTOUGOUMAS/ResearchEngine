@@ -17,7 +17,7 @@ public class HomeController {
 
     @RequestMapping("/")
     public String index() {
-        return "Welcom";
+        return "Welcome";
     }
 
     @GetMapping("/search")
