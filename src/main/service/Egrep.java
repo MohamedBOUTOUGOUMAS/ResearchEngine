@@ -17,18 +17,18 @@ public class Egrep {
 	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx){
 		String filePath = Helper.BOOKS_PATH+"/"+fileName;
 		ArrayList<Position> linesMatched = new ArrayList<>();
-		Book book = new Book(fileName);
 		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
 			RadixTree rt = new RadixTree();
-			rt.makeTree(filePath, book);
+			rt.makeTree(fileName);
 			ArrayList<Position> pos = rt.isPresent(word);
 			if (pos != null && pos.size() > 0) {
 				linesMatched.addAll(pos);
-				return new ResearchResult(book, linesMatched);
+				return new ResearchResult(Book.getEmptyBook(fileName), linesMatched);
 			}
 		}*/
 
+		Book book = new Book(fileName);
 		BufferedReader lecteurAvecBuffer;
 		try {
 			lecteurAvecBuffer = new BufferedReader(new FileReader(filePath));
@@ -45,11 +45,10 @@ public class Egrep {
 
 				ArrayList<Position> p;
 
-				if (regEx != null) {
+				if (regEx != null)
 					p = matchLineWithAutomat(ligne, l, regEx);
-				} else {
+				else
 					p = matchLineWithKMP(word, ligne, l);
-				}
 
 				if (p.size() > 0) {
 					linesMatched.addAll(p);

@@ -36,4 +36,27 @@ public class Book {
         }
         return book;
     }
+
+    public static Book getEmptyBook(String fileName){
+        BufferedReader lecteurAvecBuffer;
+        Book book = new Book(fileName);
+        try {
+            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+fileName));
+            String line;
+            boolean findTitle = false;
+            boolean findAuthor = false;
+            boolean findReleaseDate = false;
+            while ((line = lecteurAvecBuffer.readLine()) != null) {
+                if (!findTitle) findTitle = Helper.decorateBookWithTitle(line, book, findTitle);
+                if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(line, book, findAuthor);
+                if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(line, book, findReleaseDate);
+                if (findTitle && findAuthor && findReleaseDate) break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
+
 }

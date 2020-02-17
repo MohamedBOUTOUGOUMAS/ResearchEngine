@@ -60,9 +60,7 @@ public class Automat {
 						} else {
 							this.auto[i][j] = null;
 						}
-
 					}
-
 				}
 				for (int i = 0; i < row2; i++) {
 					for (int j = 0; j < 255; j++) {

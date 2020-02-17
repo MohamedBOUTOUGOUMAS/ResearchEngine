@@ -11,10 +11,14 @@ import java.util.Map;
 public class Helper {
 
     public static String BOOKS_PATH = "books-master";
+    public static String INDEXES_PATH = "indexes";
+    public static String INDEXES_TABLES_PATH = "indexesTables";
+    public static int NB_BOOKS = 1664;
 
-    public static ArrayList<String> readBooks(){
+
+    public static ArrayList<String> readBooks(String path){
         ArrayList<String> books = new ArrayList<>();
-        File repertoire = new File(Helper.BOOKS_PATH);
+        File repertoire = new File(path);
         String liste[] = repertoire.list();
 
         if (liste != null) {
@@ -96,6 +100,19 @@ public class Helper {
             pattern = e.getValue().getAsString();
         }
         return pattern;
+    }
+
+    public static String cleanText(String ligne) {
+        // strips off all non-ASCII characters
+        ligne = ligne.replaceAll("[^\\x00-\\x7F]", "");
+
+        // erases all the ASCII control characters
+        ligne = ligne.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+        // removes non-printable characters from Unicode
+        ligne = ligne.replaceAll("\\p{C}", "");
+        ligne = ligne.trim();
+        return ligne;
     }
 
 }

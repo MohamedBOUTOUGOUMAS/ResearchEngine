@@ -25,14 +25,14 @@ public class ThreadPool {
             regEx = new RegEx(pattern);
         }
 
-        ArrayList<String> books = Helper.readBooks();
+        ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
         futuresMatched = new ArrayList<>();
-        futuresMatched.addAll(books.stream()
-                .limit(1664)
-                .map(book -> {
-                    MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
-                    return pool.submit(matchingBook);
-                }).collect(Collectors.toList()));
+        for (int i=0; i<books.size(); i++) {
+            String book = books.get(i);
+            if(i > Helper.NB_BOOKS) break;
+            MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
+            futuresMatched.add(pool.submit(matchingBook));
+        }
 
         List<ResearchResult> results = futuresMatched
                 .stream()
@@ -40,7 +40,7 @@ public class ThreadPool {
                     try {
                         ResearchResult researchResult = futureMatched.get();
                         if (researchResult.positions.size() == 0) return null;
-                        System.out.println(researchResult.book.fileName);
+                        //System.out.println(researchResult.book.fileName);
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();

@@ -69,6 +69,7 @@ public class Betweenness {
 	}
 
 	public static ArrayList<ResearchResult> sortByBetweenes(List<ResearchResult> searchResult) {
+		System.out.println("sortBetweeness");
 		ArrayList<ResearchResult> sortedResult;
 		ArrayList<Edge> edges;
 
@@ -77,12 +78,13 @@ public class Betweenness {
 		for(int i = 0; i < searchResult.size(); i++) {
 			hashedFiles.put(i, searchResult.get(i));
 		}
+		System.out.println("BeforeCreatingGraph");
 		edges = createGraph(hashedFiles);
-
+		System.out.println("End reading files");
 		// compute shortestPaths
 		FloydWarshall fw = new FloydWarshall();
 		fw.calculShortestPaths(edges, searchResult.size());
-
+		System.out.println("End floydWarshall");
 		for (int i = 0; i < searchResult.size(); i++) {
 			for (int j = 0; j < searchResult.size(); j++) {
 				if(i==j) continue;
@@ -117,7 +119,6 @@ public class Betweenness {
 	private static ArrayList<Edge> createGraph(HashMap<Integer, ResearchResult> searchResult) {
 		ArrayList<Edge> edges = new ArrayList<>();
 		double dist;
-
 		for (int i = 0; i < searchResult.keySet().size(); i++) {
 			for (int j = i+1; j < searchResult.keySet().size(); j++) {
 				dist = getDistance(searchResult.get(i).book.fileName, searchResult.get(j).book.fileName);
@@ -126,7 +127,6 @@ public class Betweenness {
 				}
 			}
 		}
-
 		return edges;
 	}
 

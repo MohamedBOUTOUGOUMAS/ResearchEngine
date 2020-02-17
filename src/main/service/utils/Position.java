@@ -1,8 +1,9 @@
 package main.service.utils;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class Position implements Comparator<Position> {
+public class Position implements Comparator<Position>, Serializable {
 	public String line;
 	public int nbLine;
 	public int initPos;

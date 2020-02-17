@@ -1,10 +1,10 @@
 package main.controller;
+
 import main.multiThreading.ThreadPool;
 import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +30,8 @@ public class HomeController {
 
         results = ThreadPool.getResultsResearch(pattern);
         Collections.sort(results, (o1, o2) -> o2.positions.size() - o1.positions.size());
+        //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
+        //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
         return results;
     }
     @PostMapping("/advencedSearch")
@@ -44,6 +46,8 @@ public class HomeController {
 
         results = ThreadPool.getResultsResearch(pattern);
         Collections.sort(results, (o1, o2) -> o2.positions.size() - o1.positions.size());
+        //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
+        //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
         return results;
     }
 

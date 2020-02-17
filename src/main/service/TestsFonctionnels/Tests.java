@@ -87,9 +87,11 @@ public class Tests {
 	public void RadixTreeTests() {
 
 		RadixTree tree = new RadixTree();
-		tree.insertWord("bulle",0,new Position());
-        tree.insertWord("bus",0,new Position());
-        tree.insertWord("zoo",0, new Position());
+		ArrayList<Position> positions = new ArrayList<>();
+		positions.add(new Position());
+		tree.insertWord("bulle",0, positions);
+        tree.insertWord("bus",0, positions);
+        tree.insertWord("zoo",0, positions);
         Assert.assertTrue(tree.isPresent("bulle") != null && tree.isPresent("bulle").size() == 1);
         Assert.assertTrue(tree.isPresent("bus") != null && tree.isPresent("bus").size() == 1);
         Assert.assertTrue(tree.isPresent("zoo") != null && tree.isPresent("zoo").size() == 1);

@@ -4,6 +4,8 @@ import main.service.utils.Position;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static main.service.utils.Helper.cleanText;
+
 public class AefDeterministe {
 
 	public Automat automat;
@@ -226,18 +228,7 @@ public class AefDeterministe {
 		return res;
 	}
 
-	public String cleanText(String ligne) {
-		// strips off all non-ASCII characters
-		ligne = ligne.replaceAll("[^\\x00-\\x7F]", "");
 
-		// erases all the ASCII control characters
-		ligne = ligne.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-
-		// removes non-printable characters from Unicode
-		ligne = ligne.replaceAll("\\p{C}", "");
-		ligne = ligne.trim();
-		return ligne;
-	}
 
 	public ArrayList<Position> matchAll(String ligne, int l) {
 		ArrayList<Position> matchResult = new ArrayList<Position>();
@@ -248,9 +239,8 @@ public class AefDeterministe {
 			String tmp = ligne.substring(i, size);
 			int resMatch = match(tmp);
 			if(resMatch != -1) {
-				int index = ligne.indexOf(tmp);
-				String word = ligne.substring(index, index+resMatch);
-				Position p = new Position(ligne, l, index, (index + resMatch), word);
+				String word = ligne.substring(i, i+resMatch);
+				Position p = new Position(ligne, l, i, (i + resMatch), word);
 				matchResult.add(p);
 				i += resMatch;
 			}

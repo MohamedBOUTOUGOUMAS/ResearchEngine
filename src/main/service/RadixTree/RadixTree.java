@@ -1,7 +1,5 @@
 package main.service.RadixTree;
 
-import main.service.KMP.KMP;
-import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.Position;
 
@@ -15,9 +13,9 @@ public class RadixTree {
 	private ArrayList<RadixTree> children;
 
 	public RadixTree() {
-		children = new ArrayList<RadixTree>();
+		children = new ArrayList<>();
 		isWord = false;
-		positions = new ArrayList<Position>();
+		positions = new ArrayList<>();
 	}
 
 	public RadixTree childIfPresent(char c) {
@@ -28,7 +26,7 @@ public class RadixTree {
 		return null;
 	}
 
-	public void insertWord(String word, int i, Position pos) {
+	public void insertWord(String word, int i, ArrayList<Position> pos) {
 		if (i < word.length()) {
 			RadixTree child = this.childIfPresent(word.charAt(i));
 			if (child == null) {
@@ -37,7 +35,7 @@ public class RadixTree {
 				this.children.add(child);
 			}
 			if (i == word.length() - 1) {
-				child.positions.add(pos);
+				child.positions.addAll(pos);
 				child.isWord = true;
 			} else {
 				i += 1;
@@ -70,9 +68,9 @@ public class RadixTree {
 		positions.addAll(current.matchAll());
 		positions.addAll(current.positions);
 
-		for (Position p : positions) {
+		/*for (Position p : positions) {
 			p.endPos = p.initPos + word.length();
-		}
+		}*/
 		return positions;
 	}
 
@@ -83,42 +81,17 @@ public class RadixTree {
 			r.printer();
 	}
 
-	public void makeTree(String p1, Book book) {
-		BufferedReader lecteurAvecBuffer;
+	public void makeTree(String fileName) {
 		try {
-			lecteurAvecBuffer = new BufferedReader(new FileReader(p1));
-			String ligne;
-			int l = 1;
-			boolean findTitle = false;
-			boolean findAuthor = false;
-			boolean findReleaseDate = false;
-			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-				if (!findTitle) findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
-				if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
-				if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
-				if (!ligne.equals("") && !ligne.equals("\n")) {
-					String[] array = ligne.split("[^a-zA-Z]");
-					if (array.length != 0) {
-						for (int i = 0; i < array.length; i++) {
-							String word = array[i];
-							if (!word.equals("") && !word.equals("\n")) {
-								int[] retenue = {}; //= KMP.calculRetenue(word.toCharArray());
-								//int index = KMP.match_Fast(word.toCharArray(), ligne.toCharArray());
-								int index = KMP.match(word.toCharArray(), retenue, ligne.toCharArray());
-								Position pos = new Position(ligne, l, index);
-								this.insertWord(word, 0, pos);
-							}
-						}
-					}
-				}
-				l++;
+			FileInputStream fs = new FileInputStream(Helper.INDEXES_PATH+"/"+fileName);
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			Map<String, ArrayList<Position>> dic = (Map<String, ArrayList<Position>>) ois.readObject();
+			for (Map.Entry<String, ArrayList<Position>> e : dic.entrySet()){
+				this.insertWord(e.getKey(), 0, e.getValue());
 			}
-
-			lecteurAvecBuffer.close();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			ois.close();
+			fs.close();
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
