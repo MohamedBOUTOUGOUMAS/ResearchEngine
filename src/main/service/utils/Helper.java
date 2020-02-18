@@ -22,7 +22,7 @@ public class Helper {
         String liste[] = repertoire.list();
 
         if (liste != null) {
-            for (int i = 0; i < liste.length; i++) {
+            for (int i = 0; i < NB_BOOKS; i++) {
                 books.add(liste[i]);
             }
         } else {

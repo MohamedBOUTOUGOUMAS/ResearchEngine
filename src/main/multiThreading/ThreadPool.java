@@ -29,7 +29,6 @@ public class ThreadPool {
         futuresMatched = new ArrayList<>();
         for (int i=0; i<books.size(); i++) {
             String book = books.get(i);
-            if(i > Helper.NB_BOOKS) break;
             MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
             futuresMatched.add(pool.submit(matchingBook));
         }

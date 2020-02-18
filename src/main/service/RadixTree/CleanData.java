@@ -18,7 +18,6 @@ public class CleanData {
 		ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
 		for (int f=0; f<files.size(); f++){
 			String book = files.get(f);
-			if(f > Helper.NB_BOOKS) break;
 			System.out.println(book);
 			try {
 				FileOutputStream fos = new FileOutputStream(Helper.INDEXES_PATH+"/"+book);
