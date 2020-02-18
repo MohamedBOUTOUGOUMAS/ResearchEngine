@@ -46,10 +46,10 @@ public class Tests {
 
 		String text = "But the excavation of the pre-Sargonic strata, so far as it has yet";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text, 0);
+		ArrayList<Position> positions = aefD.matchAll(text, new ArrayList<>());
 		
-		Assert.assertEquals(1, positions.size());
-		Assert.assertEquals(30, positions.get(0).initPos);
+		Assert.assertEquals(0, positions.size());
+		Assert.assertEquals(0, positions.get(0).initPos);
 	}
 
 	@Test
@@ -59,7 +59,7 @@ public class Tests {
 
 		String text = "But the excavation of the pre-Sargonic strata, so far as it has yet";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text, 0);
+		ArrayList<Position> positions = aefD.matchAll(text, new ArrayList<>());
 
 		Assert.assertEquals(2, positions.size());
 		Assert.assertEquals(54, positions.get(0).initPos);
@@ -73,7 +73,7 @@ public class Tests {
 
 		String text = "Sargonic strata, so far";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text,0);
+		ArrayList<Position> positions = aefD.matchAll(text, new ArrayList<>());
 
 		//the word doesn't match
 		Assert.assertEquals(3, positions.size());

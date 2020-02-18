@@ -6,7 +6,7 @@ import main.service.utils.Position;
 import java.io.*;
 import java.util.*;
 
-public class RadixTree {
+public class RadixTree  implements Serializable {
 	private char root;
 	private ArrayList<Position> positions;
 	private boolean isWord;
@@ -81,18 +81,18 @@ public class RadixTree {
 			r.printer();
 	}
 
-	public void makeTree(String fileName) {
+	public static RadixTree makeTree(String fileName) {
+		RadixTree rt = null;
 		try {
 			FileInputStream fs = new FileInputStream(Helper.INDEXES_PATH+"/"+fileName);
 			ObjectInputStream ois = new ObjectInputStream(fs);
-			Map<String, ArrayList<Position>> dic = (Map<String, ArrayList<Position>>) ois.readObject();
-			for (Map.Entry<String, ArrayList<Position>> e : dic.entrySet()){
-				this.insertWord(e.getKey(), 0, e.getValue());
-			}
+			rt = (RadixTree) ois.readObject();
 			ois.close();
 			fs.close();
+			return rt;
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		return rt;
 	}
 }

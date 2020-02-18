@@ -2,6 +2,7 @@ package main.service.KMP;
 
 import main.service.utils.Position;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class KMP {
 
@@ -49,28 +50,12 @@ public class KMP {
 		return -1;
 	}
 
-	public static ArrayList<Position> matchAll(char[] facteur, char[] text, int nbLine) {
-		ArrayList<Position> matchResult = new ArrayList<>();
-		ArrayList<Integer> indexes = new ArrayList<>();
-		int firstIndex = 0;
-		int beginNewText = 0;
-		while (firstIndex != -1 && beginNewText < text.length) {
-			String str = new String(text);
-			str = str.substring(beginNewText, text.length);
-			char[] txt = str.toCharArray();
-			int val = match_Fast(facteur, txt);
-			//int val = match(facteur, retenue, txt);
-
-			if (val == -1)
-				break;
-			firstIndex = beginNewText + val;
-			beginNewText = firstIndex + facteur.length;
-			indexes.add(firstIndex);
-		}
-		for (Integer p : indexes) {
-			matchResult.add(new Position(new String(text), nbLine, p, p + facteur.length));
-		}
-		return matchResult;
+	public static ArrayList<Position> matchAll(char[] facteur, String word, ArrayList<Position> positions) {
+		char [] text = word.toCharArray();
+		int val = match_Fast(facteur, text);
+		//int val = match(facteur, retenue, txt);
+		if (val == -1) return new ArrayList<>();
+		return positions;
 	}
 
 	public static int[] calculRetenue(char[] facteur) {

@@ -31,6 +31,19 @@ public class Position implements Comparator<Position>, Serializable {
 		this.word = word;
 	}
 
+	public Position(int nbLine, int initPos, int endPos, String word) {
+		this.nbLine = nbLine;
+		this.initPos = initPos;
+		this.endPos = endPos;
+		this.word = word;
+	}
+
+	public Position(int nbLine, int initPos, int endPos) {
+		this.nbLine = nbLine;
+		this.initPos = initPos;
+		this.endPos = endPos;
+	}
+
 	public Position() {
 
 	}

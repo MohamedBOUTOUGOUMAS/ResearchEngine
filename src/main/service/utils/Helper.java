@@ -3,8 +3,13 @@ package main.service.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import javafx.geometry.Pos;
+import main.service.RadixTree.RadixTree;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -113,6 +118,21 @@ public class Helper {
         ligne = ligne.replaceAll("\\p{C}", "");
         ligne = ligne.trim();
         return ligne;
+    }
+
+    public static Map<String, ArrayList<Position>> getMapFromIndex(String fileName){
+        Map<String, ArrayList<Position>> map = null;
+        try {
+            FileInputStream fs = new FileInputStream(Helper.INDEXES_PATH+"/"+fileName);
+            ObjectInputStream ois = new ObjectInputStream(fs);
+            map = (Map<String, ArrayList<Position>>) ois.readObject();
+            ois.close();
+            fs.close();
+            return map;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
 }

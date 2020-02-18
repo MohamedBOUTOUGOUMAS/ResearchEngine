@@ -2,7 +2,7 @@ package main.service.AEF;
 
 import java.util.ArrayList;
 
-public class RegExTree {
+public class RegExTree{
 	protected int root;
 	protected ArrayList<RegExTree> subTrees;
 
