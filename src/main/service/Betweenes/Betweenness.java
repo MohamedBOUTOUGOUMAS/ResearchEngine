@@ -1,14 +1,12 @@
 package main.service.Betweenes;
 
+import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static main.service.Betweenes.Jaccard.getDistance;
 
 public class Betweenness {
@@ -130,16 +128,31 @@ public class Betweenness {
 		return edges;
 	}
 
-	public static void main(String[] args) throws Exception {
-		//ArrayList<Edge> edges = read("TestsBeds/2025.nodup");
-		// System.out.println(nbPoints);
-		String a[] = new String[] {"21-0.txt", "91-0.txt", "36-0.txt", "71-0.txt", "76-0.txt"};
-		ArrayList<String> searchResults = new ArrayList<>(asList(a));
-		//FloydWarshall fw = new FloydWarshall();
-		// TODO : clean up 'calculShortestPaths' method to return void
-		//int [][] paths = fw.calculShortestPaths(edges, nbPoints);
+	private static void storeJaccardDistances(String filename) {
+		try {
+			FileWriter writer = new FileWriter(filename);
+			BufferedWriter bw = new BufferedWriter(writer);
+			ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+			double dist;
+			for (int i = 0; i < books.size(); i++) {
+				String book1 = books.get(i);
+				for (int j = i+1; j < books.size(); j++) {
+					System.out.println(i+" "+j);
+					String book2 = books.get(j);
+					dist = getDistance(book1, book2);
+					bw.write(book1+" "+book2+" "+dist+"\n");
+				}
+			}
+			bw.close();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		//System.out.println("nb : "+ sortByBetweenes(searchResults));
+	}
+
+	public static void main(String[] args) throws Exception {
+		storeJaccardDistances("distanceJaccard.txt");
 	}
 
 }
