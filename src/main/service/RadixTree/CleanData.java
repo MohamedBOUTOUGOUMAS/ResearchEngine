@@ -1,16 +1,10 @@
 package main.service.RadixTree;
 
 import main.service.utils.Helper;
-import main.service.utils.Position;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CleanData {
-
-	static Map<String, ArrayList<Position>> dic = new HashMap<>();
 
 	public static void main(String[] args) {
 		BufferedReader lecteurAvecBuffer = null;
@@ -19,47 +13,34 @@ public class CleanData {
 		for (int f=0; f<files.size(); f++){
 			String book = files.get(f);
 			System.out.println(book);
-			try {
-				FileOutputStream fos = new FileOutputStream(Helper.INDEXES_PATH+"/"+book);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
 
+			try {
+				FileWriter writer = new FileWriter(Helper.INDEXES_PATH+"/"+book);
+				BufferedWriter bw = new BufferedWriter(writer);
 				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+book));
-				int l = 1;
+
 				while ((ligne = lecteurAvecBuffer.readLine()) != null) {
+					ligne = Helper.cleanText(ligne);
 					if (!ligne.equals("") && !ligne.equals("\n")) {
 						String[] array = ligne.split("[^a-zA-Z]");
 						if (array.length != 0) {
 							for (int i = 0; i < array.length; i++) {
 								if (!array[i].equals("") && !array[i].equals("\n")) {
-									String term = array[i];
-									int initPos = ligne.indexOf(array[i]);
-									int endPos = initPos+array[i].length();
-									Position position = new Position(ligne, l, initPos, endPos);
-
-									if (dic.containsKey(term)) {
-										ArrayList<Position> positions = dic.get(term);
-										positions.add(position);
-										dic.put(term, positions);
-									} else {
-										ArrayList<Position> positions = new ArrayList<>();
-										positions.add(position);
-										dic.put(ligne, positions);
-									}
+									bw.write(array[i] + "\n");
 								}
 							}
 						}
 					}
-					l++;
 				}
-				oos.writeObject(dic);
-				dic.clear();
-				oos.close();
-				fos.close();
+
+				bw.close();
+				writer.close();
 				lecteurAvecBuffer.close();
 
 			} catch (IOException exc) {
 				exc.printStackTrace();
-			}
+			}// TODO Auto-generated catch block
+
 
 		}
 

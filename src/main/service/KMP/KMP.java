@@ -50,12 +50,12 @@ public class KMP {
 		return -1;
 	}
 
-	public static ArrayList<Position> matchAll(char[] facteur, String word, ArrayList<Position> positions) {
+	public static int matchAll(char[] facteur, int[] retenue, String word, int nbOccurs) {
 		char [] text = word.toCharArray();
-		int val = match_Fast(facteur, text);
-		//int val = match(facteur, retenue, txt);
-		if (val == -1) return new ArrayList<>();
-		return positions;
+		//int val = match_Fast(facteur, text);
+		int val = match(facteur, retenue, text);
+		if (val == -1) return 0;
+		return nbOccurs;
 	}
 
 	public static int[] calculRetenue(char[] facteur) {

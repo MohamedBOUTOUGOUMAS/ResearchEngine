@@ -3,8 +3,6 @@ package main.service.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import javafx.geometry.Pos;
-import main.service.RadixTree.RadixTree;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +13,9 @@ import java.util.Map;
 
 public class Helper {
 
-    public static String BOOKS_PATH = "books-master";
+    public static String BOOKS_PATH = "books-master/files";
     public static String INDEXES_PATH = "indexes";
-    public static String INDEXES_TABLES_PATH = "indexesTables";
-    public static int NB_BOOKS = 1664;
+    public static String INDEXES_TABLES_PATH = "indexesTable";
 
 
     public static ArrayList<String> readBooks(String path){
@@ -27,7 +24,7 @@ public class Helper {
         String liste[] = repertoire.list();
 
         if (liste != null) {
-            for (int i = 0; i < NB_BOOKS; i++) {
+            for (int i = 0; i < liste.length; i++) {
                 books.add(liste[i]);
             }
         } else {

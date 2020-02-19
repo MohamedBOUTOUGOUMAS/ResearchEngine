@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class ResearchResult {
 
     public Book book;
-    public ArrayList<Position> positions;
+    public int nbMatched;
 
-    public ResearchResult(Book book, ArrayList<Position> positions){
+    public ResearchResult(Book book, int nbMatched){
         this.book = book;
-        this.positions = positions;
+        this.nbMatched = nbMatched;
     }
 }

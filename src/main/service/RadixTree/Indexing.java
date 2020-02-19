@@ -4,35 +4,31 @@ import main.service.utils.Helper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 public class Indexing {
 
-	static Map<String, Integer> dic;
+
 
 	public static void makeMap() {
+
+		BufferedReader lecteurAvecBuffer;
 		ArrayList<String> files = Helper.readBooks(Helper.INDEXES_PATH);
-		for (int i = 0; i < files.size(); i++) {
-			dic = new HashMap<>();
-			String index = files.get(i);
-			System.out.println(index);
-			BufferedReader lecteurAvecBuffer;
+
+		for (int f=0; f<files.size(); f++){
+			Map<String, Integer> dic = new HashMap<>();
+			String book = files.get(f);
+			System.out.println(book);
 			try {
-				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_PATH+"/"+index));
+				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_PATH+"/"+book));
 				String ligne;
 				while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-					String [] arr = ligne.split(" ");
-					String term = arr[0];
-
 					if (dic.containsKey(ligne)) {
 						dic.put(ligne, dic.get(ligne) + 1);
 					} else {
@@ -40,33 +36,29 @@ public class Indexing {
 					}
 				}
 
-				Map<String, Integer> result = dic.entrySet().stream().sorted(Entry.comparingByValue())
-						.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (oldValue, newValue) -> oldValue,
-								LinkedHashMap::new));
-
-				FileWriter writer = new FileWriter(Helper.INDEXES_TABLES_PATH+"/"+index);
+				FileWriter writer = new FileWriter(Helper.INDEXES_TABLES_PATH+"/"+book);
 				BufferedWriter bw = new BufferedWriter(writer);
 
-				for (Entry<String, Integer> e : result.entrySet()) {
+				for (Entry<String, Integer> e : dic.entrySet()) {
 					if (e.getKey().length() > 3 && e.getValue() < 100)
-						bw.write(e.getKey() + " " + e.getValue() + "\n");
+						bw.write(e.getKey() + " " + e.getValue().toString() + ",");
 				}
 
 				lecteurAvecBuffer.close();
 				bw.close();
 				writer.close();
 
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("End");
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		makeMap();
 	}
+
 
 }

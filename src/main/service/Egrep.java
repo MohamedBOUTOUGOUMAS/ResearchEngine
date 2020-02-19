@@ -1,8 +1,6 @@
 package main.service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -17,9 +15,8 @@ import main.service.utils.ResearchResult;
 
 public class Egrep {
 
-	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx){
-		String filePath = Helper.BOOKS_PATH+"/"+fileName;
-		ArrayList<Position> linesMatched = new ArrayList<>();
+	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx, int[] retenue){
+		int nbMatched = 0;
 		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
 			RadixTree rt = RadixTree.makeTree(fileName);
@@ -34,50 +31,46 @@ public class Egrep {
 
 		}*/
 		Book book = Book.getEmptyBook(fileName);
-		Map<String, ArrayList<Position>> index = Helper.getMapFromIndex(fileName);
-		System.out.println(index);
-		for (Map.Entry<String, ArrayList<Position>> lineFromIndex: index.entrySet()) {
-			ArrayList<Position> p;
-			if (regEx != null)
-				p = matchLineWithAutomat(lineFromIndex.getKey(), lineFromIndex.getValue(), regEx);
-			else
-				p = matchLineWithKMP(word, lineFromIndex.getKey(), lineFromIndex.getValue());
+		BufferedReader lecteurAvecBuffer;
+		String ligne;
+		try {
+			lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_TABLES_PATH+"/"+fileName));
+			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
+				if (!ligne.equals("") && !ligne.equals("\n")) {
+					String[] array = ligne.split(",");
+					for (String tupleWordNbOccurs: array){
+						String [] ar = tupleWordNbOccurs.split(" ");
+						if (ar.length != 0) {
+							String toMatch = ar[0];
+							int nbOccurs = Integer.parseInt(ar[1]);
+							if (regEx != null){
+								System.out.println("AEF");
+								nbMatched += matchLineWithAutomat(regEx, toMatch, nbOccurs);
+							}
+							else {
+								System.out.println("KMP");
+								nbMatched += matchLineWithKMP(word, retenue, toMatch, nbOccurs);
+								System.out.println(nbMatched);
+							}
+						}
+					}
 
-			if (p.size() > 0) {
-				linesMatched.addAll(p);
+				}
 			}
+			lecteurAvecBuffer.close();
+
+		} catch (IOException exc) {
+			exc.printStackTrace();
 		}
 
-/*
-		BufferedReader lecteurAvecBuffer;
-		try {
-			lecteurAvecBuffer = new BufferedReader(new FileReader(filePath));
-			String ligne;
-			boolean findTitle = false;
-			boolean findAuthor = false;
-			boolean findReleaseDate = false;
-			int l = 1;
-			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-
-				if (!findTitle) findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
-				if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
-				if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
-
-
-				l++;
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-		return new ResearchResult(book, linesMatched);
+		return new ResearchResult(book, nbMatched);
 	}
 
-	public static ArrayList<Position> matchLineWithAutomat(String word, ArrayList<Position> positions, RegEx regEx) {
-		return regEx.aef.matchAll(word, positions);
+	public static int matchLineWithAutomat(RegEx regEx, String word, int nbOccurs) {
+		return regEx.aef.matchAll(word, nbOccurs);
 	}
 
-	public static ArrayList<Position> matchLineWithKMP(String pattern, String word, ArrayList<Position> positions) {
-		return KMP.matchAll(pattern.toCharArray(), word, positions);
+	public static int matchLineWithKMP(String pattern, int[] retenue, String word, int nbOccurs) {
+		return KMP.matchAll(pattern.toCharArray(), retenue, word, nbOccurs);
 	}
 }

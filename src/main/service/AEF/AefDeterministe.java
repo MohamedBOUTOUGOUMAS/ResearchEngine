@@ -230,20 +230,19 @@ public class AefDeterministe {
 
 
 
-	public ArrayList<Position> matchAll(String word, ArrayList<Position> positions) {
-		ArrayList<Position> matchResult = new ArrayList<Position>();
+	public int matchAll(String word, int nbOccurs) {
 		int i = 0;
 		int size = word.length();
 		while (i < size) {
 			String tmp = word.substring(i, size);
 			int resMatch = match(tmp);
 			if(resMatch != -1) {
-				return positions;
+				return nbOccurs;
 			}
 			else {
 				i++;
 			}
 		}
-		return matchResult;
+		return 0;
 	}
 }
