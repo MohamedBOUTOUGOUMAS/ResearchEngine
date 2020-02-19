@@ -49,9 +49,8 @@ public class KMP {
 		return -1;
 	}
 
-	public static ArrayList<Position> matchAll(char[] facteur, char[] text, int nbLine) {
-		ArrayList<Position> matchResult = new ArrayList<>();
-		ArrayList<Integer> indexes = new ArrayList<>();
+	public static int matchAll(char[] facteur, char[] text, int nbLine) {
+		int matchResult = 0;
 		int firstIndex = 0;
 		int beginNewText = 0;
 		while (firstIndex != -1 && beginNewText < text.length) {
@@ -65,11 +64,9 @@ public class KMP {
 				break;
 			firstIndex = beginNewText + val;
 			beginNewText = firstIndex + facteur.length;
-			indexes.add(firstIndex);
+			matchResult += 1;
 		}
-		for (Integer p : indexes) {
-			matchResult.add(new Position(new String(text), nbLine, p, p + facteur.length));
-		}
+
 		return matchResult;
 	}
 

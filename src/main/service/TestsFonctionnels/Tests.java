@@ -7,8 +7,14 @@ import main.service.RadixTree.*;
 import main.service.utils.Position;
 import org.junit.Assert;
 import org.junit.Test;
+import org.unix4j.Unix4j;
+import org.unix4j.line.Line;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class Tests {
 
@@ -20,7 +26,7 @@ public class Tests {
 		int index = KMP.match(facteur.toCharArray(), KMP.calculRetenue(facteur.toCharArray()),
 				text.toCharArray());
 
-		Assert.assertEquals(49, index);
+		assertEquals(49, index);
 	}
 
 	@Test
@@ -31,12 +37,12 @@ public class Tests {
 		int index = KMP.match(facteur.toCharArray(), KMP.calculRetenue(facteur.toCharArray()),
 				text.toCharArray());
 
-		Assert.assertEquals(3, index);
+		assertEquals(3, index);
 
 	}
 	
 	
-	@Test
+	/*@Test
 	public void AEFDeterministeTest1() {
 
 		RegExTree sargon = main.service.AEF.Test.exampleSargon();
@@ -48,8 +54,8 @@ public class Tests {
 		//end's index of the matched word
 		ArrayList<Position> positions = aefD.matchAll(text, 0);
 		
-		Assert.assertEquals(1, positions.size());
-		Assert.assertEquals(30, positions.get(0).initPos);
+		assertEquals(1, positions.size());
+		assertEquals(30, positions.get(0).initPos);
 	}
 
 	@Test
@@ -61,9 +67,9 @@ public class Tests {
 		//end's index of the matched word
 		ArrayList<Position> positions = aefD.matchAll(text, 0);
 
-		Assert.assertEquals(2, positions.size());
-		Assert.assertEquals(54, positions.get(0).initPos);
-		Assert.assertEquals(61, positions.get(1).initPos);
+		assertEquals(2, positions.size());
+		assertEquals(54, positions.get(0).initPos);
+		assertEquals(61, positions.get(1).initPos);
 	}
 
 	@Test
@@ -76,11 +82,11 @@ public class Tests {
 		ArrayList<Position> positions = aefD.matchAll(text,0);
 
 		//the word doesn't match
-		Assert.assertEquals(3, positions.size());
-		Assert.assertEquals(8, positions.get(0).initPos);
-		Assert.assertEquals(16, positions.get(1).initPos);
-		Assert.assertEquals(19, positions.get(2).initPos);
-	}
+		assertEquals(3, positions.size());
+		assertEquals(8, positions.get(0).initPos);
+		assertEquals(16, positions.get(1).initPos);
+		assertEquals(19, positions.get(2).initPos);
+	}*/
 	
 	
 	@Test
@@ -95,5 +101,14 @@ public class Tests {
         Assert.assertTrue(tree.isPresent("bulle") != null && tree.isPresent("bulle").size() == 1);
         Assert.assertTrue(tree.isPresent("bus") != null && tree.isPresent("bus").size() == 1);
         Assert.assertTrue(tree.isPresent("zoo") != null && tree.isPresent("zoo").size() == 1);
+	}
+
+	@Test
+	public void whenGrepWithSimpleString_thenCorrect() {
+		int expectedLineCount = 1;
+		File file = new File("bref.txt");
+		List<Line> lines = Unix4j.grep("c(o|p)+y", file).toLineList();
+		System.out.println(lines);
+		assertEquals(expectedLineCount, lines.size());
 	}
 }

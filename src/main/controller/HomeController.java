@@ -29,7 +29,7 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
-        Collections.sort(results, (o1, o2) -> o2.positions.size() - o1.positions.size());
+        Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
         return results;
@@ -45,7 +45,7 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
-        Collections.sort(results, (o1, o2) -> o2.positions.size() - o1.positions.size());
+        Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
         return results;

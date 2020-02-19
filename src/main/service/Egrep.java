@@ -16,7 +16,7 @@ public class Egrep {
 
 	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx){
 		String filePath = Helper.BOOKS_PATH+"/"+fileName;
-		ArrayList<Position> linesMatched = new ArrayList<>();
+		int linesMatched = 0;
 		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
 			RadixTree rt = new RadixTree();
@@ -43,16 +43,11 @@ public class Egrep {
 				if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
 				if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
 
-				ArrayList<Position> p;
-
 				if (regEx != null)
-					p = matchLineWithAutomat(ligne, l, regEx);
+					linesMatched += matchLineWithAutomat(ligne, l, regEx);
 				else
-					p = matchLineWithKMP(word, ligne, l);
+					linesMatched += matchLineWithKMP(word, ligne, l);
 
-				if (p.size() > 0) {
-					linesMatched.addAll(p);
-				}
 				l++;
 			}
 		} catch (IOException e) {
@@ -61,11 +56,11 @@ public class Egrep {
 		return new ResearchResult(book, linesMatched);
 	}
 
-	public static ArrayList<Position> matchLineWithAutomat(String line, int nbLine, RegEx regEx) {
+	public static int matchLineWithAutomat(String line, int nbLine, RegEx regEx) {
 		return regEx.aef.matchAll(line, nbLine);
 	}
 
-	public static ArrayList<Position> matchLineWithKMP(String word, String line, int nbLine) {
+	public static int matchLineWithKMP(String word, String line, int nbLine) {
 		return KMP.matchAll(word.toCharArray(), line.toCharArray(), nbLine);
 	}
 }

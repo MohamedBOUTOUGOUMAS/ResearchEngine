@@ -4,27 +4,23 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 public class Position implements Comparator<Position>, Serializable {
-	public String line;
 	public int nbLine;
 	public int initPos;
 	public int endPos;
 	public String word;
 
-	public Position(String line, int nbLine, int initPos) {
-		this.line = line;
+	public Position(int nbLine, int initPos) {
 		this.nbLine = nbLine;
 		this.initPos = initPos;
 	}
 
-	public Position(String line, int nbLine, int initPos, int endPos) {
-		this.line = line;
+	public Position(int nbLine, int initPos, int endPos) {
 		this.nbLine = nbLine;
 		this.initPos = initPos;
 		this.endPos = endPos;
 	}
 
-	public Position(String line, int nbLine, int initPos, int endPos, String word) {
-		this.line = line;
+	public Position(int nbLine, int initPos, int endPos, String word) {
 		this.nbLine = nbLine;
 		this.initPos = initPos;
 		this.endPos = endPos;
@@ -33,10 +29,6 @@ public class Position implements Comparator<Position>, Serializable {
 
 	public Position() {
 
-	}
-
-	public String toString() {
-		return "{" + line + " " + initPos + "}";
 	}
 
 	@Override

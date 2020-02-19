@@ -230,8 +230,8 @@ public class AefDeterministe {
 
 
 
-	public ArrayList<Position> matchAll(String ligne, int l) {
-		ArrayList<Position> matchResult = new ArrayList<Position>();
+	public int matchAll(String ligne, int l) {
+		int matchResult = 0;
 		ligne = cleanText(ligne);
 		int i = 0;
 		int size = ligne.length();
@@ -240,8 +240,7 @@ public class AefDeterministe {
 			int resMatch = match(tmp);
 			if(resMatch != -1) {
 				String word = ligne.substring(i, i+resMatch);
-				Position p = new Position(ligne, l, i, (i + resMatch), word);
-				matchResult.add(p);
+				matchResult += 1;
 				i += resMatch;
 			}
 			else {

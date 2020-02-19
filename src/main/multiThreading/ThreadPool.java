@@ -38,7 +38,7 @@ public class ThreadPool {
                 .map(futureMatched -> {
                     try {
                         ResearchResult researchResult = futureMatched.get();
-                        if (researchResult.positions.size() == 0) return null;
+                        if (researchResult.nbMatched == 0) return null;
                         //System.out.println(researchResult.book.fileName);
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {

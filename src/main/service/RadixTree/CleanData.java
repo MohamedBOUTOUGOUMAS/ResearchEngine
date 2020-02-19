@@ -34,8 +34,7 @@ public class CleanData {
 									String term = array[i];
 									int initPos = ligne.indexOf(array[i]);
 									int endPos = initPos+array[i].length();
-									Position position = new Position(ligne, l, initPos, endPos);
-
+									Position position = new Position(l, initPos, endPos);
 									if (dic.containsKey(term)) {
 										ArrayList<Position> positions = dic.get(term);
 										positions.add(position);
