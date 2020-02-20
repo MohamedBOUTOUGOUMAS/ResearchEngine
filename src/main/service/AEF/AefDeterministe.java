@@ -1,6 +1,5 @@
 package main.service.AEF;
 
-import main.service.utils.Position;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -106,7 +105,7 @@ public class AefDeterministe {
 
 	public static boolean containsMaison(ArrayList<String> explored, String et) {
 		for (String e : explored) {
-			if (equalsStats(e, et) == true) {
+			if (equalsStats(e, et)) {
 				return true;
 			}
 
@@ -177,7 +176,7 @@ public class AefDeterministe {
 				}
 
 			}
-			if (automat.fin[i] != true) {
+			if (!automat.fin[i]) {
 				automat.fin[i] = false;
 			}
 		}
@@ -203,29 +202,21 @@ public class AefDeterministe {
 	}
 
 	public int match(String word) {
-		Integer currentState = 0;
-		int res = 0;
-		ArrayList<Integer> results = new ArrayList<>();
+		int currentState = 0;
+		int index = 0;
+		int matchLength = -1;
 		if (automat.fin[currentState])
-			results.add(res);
+			matchLength = index;
 		for (int i = 0; i < word.length(); i++) {
 			Integer nextState = automat.auto[currentState][(int) word.charAt(i)];
 			if (nextState == null)
 				break;
 			currentState = nextState;
-			res++;
+			index++;
 			if (automat.fin[currentState])
-				results.add(res);
+				matchLength = index;
 		}
-		if (results.size() == 0)
-			return -1;
-		res = 0;
-
-		for (Integer r : results) {
-			if (r > res)
-				res = r;
-		}
-		return res;
+		return matchLength;
 	}
 
 
@@ -239,7 +230,6 @@ public class AefDeterministe {
 			String tmp = ligne.substring(i, size);
 			int resMatch = match(tmp);
 			if(resMatch != -1) {
-				String word = ligne.substring(i, i+resMatch);
 				matchResult += 1;
 				i += resMatch;
 			}

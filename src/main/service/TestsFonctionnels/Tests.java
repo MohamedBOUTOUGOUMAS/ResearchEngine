@@ -42,7 +42,7 @@ public class Tests {
 	}
 	
 	
-	/*@Test
+	@Test
 	public void AEFDeterministeTest1() {
 
 		RegExTree sargon = main.service.AEF.Test.exampleSargon();
@@ -52,10 +52,9 @@ public class Tests {
 
 		String text = "But the excavation of the pre-Sargonic strata, so far as it has yet";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text, 0);
+		int positions = aefD.matchAll(text, 0);
 		
-		assertEquals(1, positions.size());
-		assertEquals(30, positions.get(0).initPos);
+		assertEquals(1, positions);
 	}
 
 	@Test
@@ -65,11 +64,9 @@ public class Tests {
 
 		String text = "But the excavation of the pre-Sargonic strata, so far as it has yet";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text, 0);
+		int positions = aefD.matchAll(text, 0);
 
-		assertEquals(2, positions.size());
-		assertEquals(54, positions.get(0).initPos);
-		assertEquals(61, positions.get(1).initPos);
+		assertEquals(2, positions);
 	}
 
 	@Test
@@ -79,14 +76,11 @@ public class Tests {
 
 		String text = "Sargonic strata, so far";
 		//end's index of the matched word
-		ArrayList<Position> positions = aefD.matchAll(text,0);
+		int positions = aefD.matchAll(text,0);
 
 		//the word doesn't match
-		assertEquals(3, positions.size());
-		assertEquals(8, positions.get(0).initPos);
-		assertEquals(16, positions.get(1).initPos);
-		assertEquals(19, positions.get(2).initPos);
-	}*/
+		assertEquals(3, positions);
+	}
 	
 	
 	@Test
@@ -103,12 +97,12 @@ public class Tests {
         Assert.assertTrue(tree.isPresent("zoo") != null && tree.isPresent("zoo").size() == 1);
 	}
 
-	@Test
+	/*@Test
 	public void whenGrepWithSimpleString_thenCorrect() {
 		int expectedLineCount = 1;
 		File file = new File("bref.txt");
 		List<Line> lines = Unix4j.grep("c(o|p)+y", file).toLineList();
 		System.out.println(lines);
 		assertEquals(expectedLineCount, lines.size());
-	}
+	}*/
 }
