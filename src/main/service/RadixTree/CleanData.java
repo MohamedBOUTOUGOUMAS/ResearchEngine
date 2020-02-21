@@ -4,64 +4,63 @@ import main.service.utils.Helper;
 import main.service.utils.Position;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CleanData {
 
-	static Map<String, ArrayList<Position>> dic = new HashMap<>();
-
-	public static void main(String[] args) {
-		BufferedReader lecteurAvecBuffer = null;
-		String ligne;
+	private static void books_to_words() {
 		ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
-		for (int f=0; f<files.size(); f++){
-			String book = files.get(f);
-			System.out.println(book);
-			try {
-				FileOutputStream fos = new FileOutputStream(Helper.INDEXES_PATH+"/"+book);
-				ObjectOutputStream oos = new ObjectOutputStream(fos);
+		Set<String> words;
+		FileWriter fw;
+		BufferedWriter bw;
+		String res = "";
 
-				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+book));
-				int l = 1;
-				while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-					if (!ligne.equals("") && !ligne.equals("\n")) {
-						String[] array = ligne.split("[^a-zA-Z]");
-						if (array.length != 0) {
-							for (int i = 0; i < array.length; i++) {
-								if (!array[i].equals("") && !array[i].equals("\n")) {
-									String term = array[i];
-									int initPos = ligne.indexOf(array[i]);
-									int endPos = initPos+array[i].length();
-									Position position = new Position(l, initPos, endPos);
-									if (dic.containsKey(term)) {
-										ArrayList<Position> positions = dic.get(term);
-										positions.add(position);
-										dic.put(term, positions);
-									} else {
-										ArrayList<Position> positions = new ArrayList<>();
-										positions.add(position);
-										dic.put(ligne, positions);
-									}
-								}
+		try {
+			for (String file : files) {
+				fw = new FileWriter(Helper.BOOKS_BY_WORDS_PATH+"/"+file);
+				bw = new BufferedWriter(fw);
+
+				words = getAllWordsFromFile(file);
+				res = words.stream().collect(Collectors.joining("\n"));
+				bw.write(res);
+
+				bw.close();
+				fw.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static Set<String> getAllWordsFromFile(String filename) {
+		Set<String> words = new HashSet<>();
+		String ligne;
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(Helper.BOOKS_PATH +"/"+filename));
+			while ((ligne = reader.readLine()) != null) {
+				if (!ligne.equals("") && !ligne.equals("\n")) {
+					String[] array = ligne.split("[^a-zA-Z]");
+					if (array.length != 0) {
+						for (int i = 0; i < array.length; i++) {
+							if (!array[i].equals("") && !array[i].equals("\n")) {
+								words.add(array[i]);
 							}
 						}
 					}
-					l++;
 				}
-				oos.writeObject(dic);
-				dic.clear();
-				oos.close();
-				fos.close();
-				lecteurAvecBuffer.close();
-
-			} catch (IOException exc) {
-				exc.printStackTrace();
 			}
-
+			reader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
+		return words;
 	}
 
+	public static void main(String[] args) {
+		books_to_words();
+	}
 }
