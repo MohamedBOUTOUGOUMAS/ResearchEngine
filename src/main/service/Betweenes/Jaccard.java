@@ -13,16 +13,16 @@ import java.util.stream.Stream;
 public class Jaccard {
 
     public static double getDistance(String file1, String file2) {
-        List<String> words1 = getAllWordsFromFile(file1);
-        List<String> words2 = getAllWordsFromFile(file2);
+        Set<String> words1 = getAllWordsFromFile(file1);
+        Set<String> words2 = getAllWordsFromFile(file2);
 
-        List<String> intersection = words1.stream()
+        Set<String> intersection = words1.stream()
                 .filter(words2::contains)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
-        List<String> union = new ArrayList<>(Stream.of(words1, words2)
+        Set<String> union = Stream.of(words1, words2)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
 
         if (!union.isEmpty()) {
             return (double) intersection.size()/union.size();
@@ -31,7 +31,7 @@ public class Jaccard {
         }
     }
 
-    private static ArrayList<String> getAllWordsFromFile(String filename) {
+    private static Set<String> getAllWordsFromFile(String filename) {
         Set<String> words = new HashSet<>();
         String ligne;
 
@@ -55,15 +55,15 @@ public class Jaccard {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>(words);
+        return words;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         try {
             double dist = getDistance("91-0.txt", "36-0.txt");
             System.out.println("Distance de jaccard : "+dist);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
