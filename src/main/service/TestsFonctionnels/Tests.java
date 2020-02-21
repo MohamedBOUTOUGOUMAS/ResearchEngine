@@ -51,8 +51,24 @@ public class Tests {
 		AefDeterministe aefD = new AefDeterministe(a);
 
 		String text = "But the excavation of the pre-Sargonic strata, so far as it has yet";
+		String txt = "This eBook is for the use of anyone anywhere at no cost and with\n" +
+				"almost no restrictions whatsoever.  You may copy it, give it away or\n" +
+				"re-use it under the terSargonicms of the Project Gutenberg License included\n" +
+				"with this eBook or online at www.gutenberg.org/license\n" +
+				"\n" +
+				"\n" +
+				"Title: Mary Wollstonecraft and the beginnings of female emancipation in France and   England\n" +
+				"\n" +
+				"Author: Jacob Bouten\n" +
+				"\n" +
+				"Release Date: May 6, 2019 [EBook #59448]\n" +
+				"\n" +
+				"Language: English\n" +
+				"\n" +
+				"\n" +
+				"*** START OF THIS PROJECT GUTENBERG EBOOK MARY WOLLSTONECRAFT ***";
 		//end's index of the matched word
-		int positions = aefD.matchAll(text, 0);
+		int positions = aefD.matchAll(txt, 0);
 		
 		assertEquals(1, positions);
 	}

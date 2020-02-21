@@ -2,8 +2,10 @@ package main.service.AEF;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import static main.service.utils.Helper.cleanText;
+import static main.service.utils.Helper.readBooks;
 
 public class AefDeterministe {
 
@@ -208,7 +210,9 @@ public class AefDeterministe {
 		if (automat.fin[currentState])
 			matchLength = index;
 		for (int i = 0; i < word.length(); i++) {
-			Integer nextState = automat.auto[currentState][(int) word.charAt(i)];
+			int asciiCode = word.charAt(i);
+			if (asciiCode > 255) break;
+			Integer nextState = automat.auto[currentState][asciiCode];
 			if (nextState == null)
 				break;
 			currentState = nextState;
@@ -223,15 +227,14 @@ public class AefDeterministe {
 
 	public int matchAll(String ligne, int l) {
 		int matchResult = 0;
-		ligne = cleanText(ligne);
 		int i = 0;
 		int size = ligne.length();
 		while (i < size) {
 			String tmp = ligne.substring(i, size);
-			int resMatch = match(tmp);
-			if(resMatch != -1) {
+			int matchLength = match(tmp);
+			if(matchLength != -1) {
 				matchResult += 1;
-				i += resMatch;
+				i += matchLength;
 			}
 			else {
 				i++;

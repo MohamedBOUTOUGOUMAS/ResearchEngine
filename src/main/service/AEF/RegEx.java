@@ -19,6 +19,7 @@ public class RegEx {
 	private static String regEx;
 
 	// CONSTRUCTOR
+	public RegEx(){}
 	public RegEx(String r) {
 		regEx = r;
 		try {

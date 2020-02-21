@@ -21,18 +21,18 @@ public class ThreadPool {
 
     public static List<ResearchResult> getResultsResearch(String pattern){
 
-        if (Helper.isRegEx(pattern)){
-            regEx = new RegEx(pattern);
-        }
+        if (Helper.isRegEx(pattern)) regEx = new RegEx(pattern);
 
         ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
-        futuresMatched = new ArrayList<>();
-        for (int i=0; i<books.size(); i++) {
-            String book = books.get(i);
-            MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
-            futuresMatched.add(pool.submit(matchingBook));
-        }
 
+        futuresMatched = new ArrayList<>();
+        futuresMatched.addAll(books.stream()
+                .map(book -> {
+                    MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
+                    return pool.submit(matchingBook);
+                })
+                .collect(Collectors.toList())
+        );
         List<ResearchResult> results = futuresMatched
                 .stream()
                 .map(futureMatched -> {

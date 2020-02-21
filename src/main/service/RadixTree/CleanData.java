@@ -1,7 +1,6 @@
 package main.service.RadixTree;
 
 import main.service.utils.Helper;
-import main.service.utils.Position;
 
 import java.io.*;
 import java.util.*;
@@ -15,16 +14,14 @@ public class CleanData {
 		FileWriter fw;
 		BufferedWriter bw;
 		String res = "";
-
 		try {
 			for (String file : files) {
+				System.out.println(file);
 				fw = new FileWriter(Helper.BOOKS_BY_WORDS_PATH+"/"+file);
 				bw = new BufferedWriter(fw);
-
 				words = getAllWordsFromFile(file);
 				res = words.stream().collect(Collectors.joining("\n"));
 				bw.write(res);
-
 				bw.close();
 				fw.close();
 			}
@@ -37,8 +34,12 @@ public class CleanData {
 		Set<String> words = new HashSet<>();
 		String ligne;
 
+		FileWriter fwClean;
+		BufferedWriter bwClean;
+
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(Helper.BOOKS_PATH +"/"+filename));
+
 			while ((ligne = reader.readLine()) != null) {
 				if (!ligne.equals("") && !ligne.equals("\n")) {
 					String[] array = ligne.split("[^a-zA-Z]");
