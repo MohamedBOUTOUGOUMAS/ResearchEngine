@@ -2,15 +2,13 @@ package main.service.RadixTree;
 
 import main.service.utils.Helper;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class Indexing {
 
@@ -24,7 +22,6 @@ public class Indexing {
 		for (int f=0; f<files.size(); f++){
 			Map<String, Integer> dic = new HashMap<>();
 			String book = files.get(f);
-			System.out.println(book);
 			try {
 				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_PATH+"/"+book));
 				String ligne;
@@ -36,18 +33,35 @@ public class Indexing {
 					}
 				}
 
-				FileWriter writer = new FileWriter(Helper.INDEXES_TABLES_PATH+"/"+book);
-				BufferedWriter bw = new BufferedWriter(writer);
+				Map<String, Integer> result = dic.entrySet().stream().sorted(Map.Entry.comparingByKey())
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
+								LinkedHashMap::new));
 
-				for (Entry<String, Integer> e : dic.entrySet()) {
-					if (e.getKey().length() > 3 && e.getValue() < 100)
-						bw.write(e.getKey() + " " + e.getValue().toString() + ",");
+				File indexDirectory = new File(Helper.INDEXES_TABLES_PATH+"/"+book);
+				boolean createdDir = indexDirectory.mkdir();
+				System.out.println(createdDir);
+				if (createdDir){
+
+					FileWriter [] fileWriters = new FileWriter[26];
+					BufferedWriter [] bufferedWriters = new BufferedWriter[26];
+					for (int i = 0; i < 26; i++) {
+						fileWriters[i] = new FileWriter(Helper.INDEXES_TABLES_PATH+"/"+book+"/"+i+".txt");
+						bufferedWriters[i] = new BufferedWriter(fileWriters[i]);
+					}
+
+					for (Entry<String, Integer> e : result.entrySet()) {
+						if (e.getKey().length() > 3 && e.getValue() < 100){
+							int asciiCode = (e.getKey().toUpperCase().charAt(0) - 65);
+							bufferedWriters[asciiCode].write(e.getKey() + " " + e.getValue().toString() + "\n");
+						}
+					}
+
+					lecteurAvecBuffer.close();
+					for (int i = 0; i < 26; i++) {
+						bufferedWriters[i].close();
+						fileWriters[i].close();
+					}
 				}
-
-				lecteurAvecBuffer.close();
-				bw.close();
-				writer.close();
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

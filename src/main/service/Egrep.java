@@ -15,7 +15,7 @@ import main.service.utils.ResearchResult;
 
 public class Egrep {
 
-	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx, int[] retenue){
+	public static ResearchResult matchAllWords(String word, String fileName, int firstLetter, RegEx regEx, int[] retenue){
 		int nbMatched = 0;
 		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
@@ -34,27 +34,32 @@ public class Egrep {
 		BufferedReader lecteurAvecBuffer;
 		String ligne;
 		try {
-			lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_TABLES_PATH+"/"+fileName));
+			lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_TABLES_PATH+"/"+fileName+"/"+firstLetter+".txt"));
 			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
 				if (!ligne.equals("") && !ligne.equals("\n")) {
-					String[] array = ligne.split(",");
-					for (String tupleWordNbOccurs: array){
-						String [] ar = tupleWordNbOccurs.split(" ");
-						if (ar.length != 0) {
-							String toMatch = ar[0];
-							int nbOccurs = Integer.parseInt(ar[1]);
-							if (regEx != null){
+					String [] ar = ligne.split(" ");
+					if (ar.length != 0) {
+						String toMatch = ar[0];
+						int nbOccurs = Integer.parseInt(ar[1]);
+						if (regEx != null){
+							int nbWords = matchLineWithAutomat(regEx, toMatch, nbOccurs);
+							if (nbMatched != 0 && nbWords == 0) {
+								System.out.println(fileName);
 								System.out.println("AEF");
-								nbMatched += matchLineWithAutomat(regEx, toMatch, nbOccurs);
+								break;
 							}
-							else {
+							nbMatched += nbWords;
+						}
+						else {
+							int nbWords = matchLineWithKMP(word, retenue, toMatch, nbOccurs);
+							if (nbMatched != 0 && nbWords == 0) {
+								System.out.println(fileName);
 								System.out.println("KMP");
-								nbMatched += matchLineWithKMP(word, retenue, toMatch, nbOccurs);
-								System.out.println(nbMatched);
+								break;
 							}
+							nbMatched += nbWords;
 						}
 					}
-
 				}
 			}
 			lecteurAvecBuffer.close();

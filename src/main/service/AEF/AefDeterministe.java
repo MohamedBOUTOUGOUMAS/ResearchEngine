@@ -203,29 +203,23 @@ public class AefDeterministe {
 	}
 
 	public int match(String word) {
-		Integer currentState = 0;
-		int res = 0;
-		ArrayList<Integer> results = new ArrayList<>();
+		int currentState = 0;
+		int index = 0;
+		int matchLength = -1;
 		if (automat.fin[currentState])
-			results.add(res);
+			matchLength = index;
 		for (int i = 0; i < word.length(); i++) {
-			Integer nextState = automat.auto[currentState][(int) word.charAt(i)];
+			int asciiCode = word.charAt(i);
+			if (asciiCode > 255) break;
+			Integer nextState = automat.auto[currentState][asciiCode];
 			if (nextState == null)
 				break;
 			currentState = nextState;
-			res++;
+			index++;
 			if (automat.fin[currentState])
-				results.add(res);
+				matchLength = index;
 		}
-		if (results.size() == 0)
-			return -1;
-		res = 0;
-
-		for (Integer r : results) {
-			if (r > res)
-				res = r;
-		}
-		return res;
+		return matchLength;
 	}
 
 

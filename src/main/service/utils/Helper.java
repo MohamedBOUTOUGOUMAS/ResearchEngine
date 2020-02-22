@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Helper {
 
-    public static String BOOKS_PATH = "books-master/files";
+    public static String BOOKS_PATH = "books-master";
     public static String INDEXES_PATH = "indexes";
     public static String INDEXES_TABLES_PATH = "indexesTable";
 
@@ -24,7 +24,7 @@ public class Helper {
         String liste[] = repertoire.list();
 
         if (liste != null) {
-            for (int i = 0; i < liste.length; i++) {
+            for (int i = 0; i < 1665; i++) {
                 books.add(liste[i]);
             }
         } else {

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ThreadPool {
 
     public static List<Future<ResearchResult>> futuresMatched;
-    public static ExecutorService pool = Executors.newFixedThreadPool(50);
+    public static ExecutorService pool = Executors.newFixedThreadPool(1);
     public static RegEx regEx = null;
     public static int[] retenue = {};
 
@@ -28,13 +28,17 @@ public class ThreadPool {
         }else {
             retenue = KMP.calculRetenue(pattern.toCharArray());
         }
+
         ArrayList<String> books = Helper.readBooks(Helper.INDEXES_TABLES_PATH);
         futuresMatched = new ArrayList<>();
-        for (int i=0; i < books.size(); i++) {
-            String book = books.get(i);
-            MatchingBook matchingBook = new MatchingBook(pattern, book, regEx, retenue);
-            futuresMatched.add(pool.submit(matchingBook));
-        }
+        futuresMatched.addAll(books.stream()
+                .map(fileName -> {
+                    int asciiCode = (pattern.toUpperCase().charAt(0) - 65);
+                    MatchingBook matchingBook = new MatchingBook(pattern, fileName, asciiCode, regEx, retenue);
+                    return pool.submit(matchingBook);
+                })
+                .collect(Collectors.toList())
+        );
 
         List<ResearchResult> results = futuresMatched
                 .stream()
