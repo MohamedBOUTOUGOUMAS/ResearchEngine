@@ -1,27 +1,23 @@
 package main.service.pageRank;
 
+import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Page_Rank {
 
 	public static Map<String, Sommet> adjacencyArray = new HashMap<>();
 	public static ArrayList<String> indexTableList;
 	public static Set<String> indexTableSet = new HashSet<>();
-	public static Map<String, Integer> map = new HashMap<>();
+	public static Map<String, Integer> fileNameIndex = new HashMap<>();
 
-	public static ArrayList<ResearchResult> researchResults;
+	public static List<ResearchResult> researchResults;
 
-	public static void setResearchResults(ArrayList<ResearchResult> researchResults){
+	public static void setResearchResults(List<ResearchResult> researchResults){
 		Page_Rank.researchResults = researchResults;
 	}
 
@@ -31,12 +27,14 @@ public class Page_Rank {
 		try{
 			for (ResearchResult researchResult : researchResults) {
 				String book = researchResult.book.fileName;
-				lecteurAvecBuffer = new BufferedReader(new FileReader(""));
+				//System.out.println(book);
+				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.JACCARD_PATH+"/"+book));
 				while((ligne = lecteurAvecBuffer.readLine()) != null) {
 					String [] aretes = new String[2];
 					aretes = ligne.split("\\s+", 2);
 					String fileNeighbor = aretes[0];
 					Float distance = Float.valueOf(aretes[1]);
+					if (distance > 0.8) continue;
 					if(adjacencyArray.containsKey(book)) {
 						adjacencyArray.get(book).neighbor.put(fileNeighbor, distance);
 					}else {
@@ -53,7 +51,7 @@ public class Page_Rank {
 			System.out.println("reading finished");
 			indexTableList = new ArrayList<>(indexTableSet);
 			for(int i = 0; i<indexTableList.size();i++) {
-				map.put(indexTableList.get(i), i);
+				fileNameIndex.put(indexTableList.get(i), i);
 			}
 		}
 	    catch(IOException exc){
@@ -68,9 +66,9 @@ public class Page_Rank {
 
 		for (Map.Entry<String, Sommet> e: mat.entrySet()){
 			float degSortant = (float)e.getValue().neighbor.size();
-			int i = map.get(e.getKey());
+			int i = fileNameIndex.get(e.getKey());
             for (Map.Entry<String, Float> nei: e.getValue().neighbor.entrySet()) {
-                int ii = map.get(nei.getKey());
+                int ii = fileNameIndex.get(nei.getKey());
                 B[ii] += (float)(A[i] / degSortant);
             }
 		}
@@ -79,7 +77,7 @@ public class Page_Rank {
 	
 	
 	public static float[] powerIteration(float alpha, int t) {
-		
+
 		float [] A = new float[indexTableList.size()];
 		
 		for(int i=0; i<A.length; i++) {
@@ -121,7 +119,7 @@ public class Page_Rank {
 
 		ArrayList<String> rank = new ArrayList<>();
 		readFile();
-
+		//System.out.println(indexTableList);
 		ArrayList<Float> res = new ArrayList<>();
 
 		float [] p = powerIteration((float) 0.15, 4);
@@ -137,12 +135,12 @@ public class Page_Rank {
 
 		for (int i = 1; i < clone.size(); i++) {
 			Float highest = clone.get(clone.size() - i - 1);
-			int index = res.indexOf(highest);
-			String book = indexTableList.get(index);
-			System.out.println(book);
+			int ind = res.indexOf(highest);
+			res.remove(highest);
+			String book = indexTableList.get(ind);
+			indexTableList.remove(book);
 			rank.add(book);
 		}
-
 		return rank;
 	}
 }
