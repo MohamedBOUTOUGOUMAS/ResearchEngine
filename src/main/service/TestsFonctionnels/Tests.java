@@ -7,8 +7,6 @@ import main.service.RadixTree.*;
 import main.service.utils.Position;
 import org.junit.Assert;
 import org.junit.Test;
-import org.unix4j.Unix4j;
-import org.unix4j.line.Line;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -15,9 +15,11 @@ import main.service.utils.ResearchResult;
 public class Egrep {
 
 	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx){
-		//String filePath = Helper.BOOKS_PATH+"/"+fileName;
-		String filePath = Helper.TEST_PATH+"/"+fileName;
+		String filePath = Helper.BOOKS_PATH+"/"+fileName;
+		//String filePath = Helper.TEST_PATH+"/"+fileName;
+
 		int linesMatched = 0;
+
 		/*String[] array = word.split("[^a-zA-Z]");
 		if (array.length == 1) {
 			RadixTree rt = new RadixTree();

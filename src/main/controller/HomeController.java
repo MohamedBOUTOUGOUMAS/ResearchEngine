@@ -30,16 +30,20 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
-        Page_Rank.setResearchResults(results);
-        ArrayList<String> booksRank = Page_Rank.getRank();
-        //Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+
+        Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
+
+        /*Page_Rank.setResearchResults(results);
+        ArrayList<String> booksRank = Page_Rank.getRank();
         List<ResearchResult> aferSort = new ArrayList<>();
         for(String book : booksRank){
             aferSort.add(ThreadPool.bookResearch.get(book));
         }
-        return aferSort;
+        return aferSort;*/
+        return results;
     }
     @PostMapping("/advencedSearch")
     public List<ResearchResult> getAdvencedSearch(@RequestBody String body) {
@@ -49,16 +53,21 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
-        Page_Rank.setResearchResults(results);
-        ArrayList<String> booksRank = Page_Rank.getRank();
-        //Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+
+        Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
+
+        /*Page_Rank.setResearchResults(results);
+        ArrayList<String> booksRank = Page_Rank.getRank();
         List<ResearchResult> aferSort = new ArrayList<>();
         for(String book : booksRank){
             aferSort.add(ThreadPool.bookResearch.get(book));
         }
-        return aferSort;
+        return aferSort;*/
+
+        return results;
     }
 
     @GetMapping("/search/book")

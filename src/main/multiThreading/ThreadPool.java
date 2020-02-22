@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class ThreadPool {
-    public static Map<String, ResearchResult> bookResearch;
+    //public static Map<String, ResearchResult> bookResearch;
     public static List<Future<ResearchResult>> futuresMatched;
     public static ExecutorService pool = Executors.newFixedThreadPool(50);
     public static RegEx regEx = null;
@@ -20,9 +20,9 @@ public class ThreadPool {
     public static List<ResearchResult> getResultsResearch(String pattern){
 
         if (Helper.isRegEx(pattern)) regEx = new RegEx(pattern);
-        bookResearch = new HashMap<>();
-        //ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
-        ArrayList<String> books = Helper.readBooks(Helper.TEST_PATH);
+        //bookResearch = new HashMap<>();
+        ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+        //ArrayList<String> books = Helper.readBooks(Helper.TEST_PATH);
 
         futuresMatched = new ArrayList<>();
         futuresMatched.addAll(books.stream()
@@ -37,7 +37,7 @@ public class ThreadPool {
                 .map(futureMatched -> {
                     try {
                         ResearchResult researchResult = futureMatched.get();
-                        bookResearch.put(researchResult.book.fileName, researchResult);
+                        //bookResearch.put(researchResult.book.fileName, researchResult);
                         if (researchResult.nbMatched == 0) return null;
                         //System.out.println(researchResult.book.fileName);
                         return researchResult;
