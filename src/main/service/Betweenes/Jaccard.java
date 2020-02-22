@@ -91,17 +91,19 @@ public class Jaccard {
         return words;
     }
 
-    public static double getDistanceFromJaccardGraph(String file1, String file2) {
-        double res = 0;
+    public static Map<String, Double> getDistanceFromJaccardGraph(String file1, double edgeThreshold) {
+        Map<String, Double> res = new HashMap<>();
         FileReader fileReader;
         BufferedReader bufferedReader;
-        String matchedLine;
         try {
             fileReader = new FileReader(Helper.JACCARD_PATH+"/"+file1);
             bufferedReader = new BufferedReader(fileReader);
 
-            matchedLine = bufferedReader.lines().filter(line -> line.contains(file2)).collect(Collectors.toList()).get(0);
-            res = Double.parseDouble(matchedLine.split(" ")[1]);
+            res = bufferedReader.lines()
+                    .map(line -> line.split(" "))
+                    .map(lineArray -> new AbstractMap.SimpleEntry<>(lineArray[0], Double.parseDouble(lineArray[1])))
+                    //.filter(entry -> entry.getValue() < edgeThreshold)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             bufferedReader.close();
             fileReader.close();
@@ -113,7 +115,11 @@ public class Jaccard {
 
     public static void main(String[] args) {
         //createJaccardGraph();
-        double res = getDistanceFromJaccardGraph("49182-0.txt", "55467-0.txt");
-        System.out.println(res);
+        ArrayList<String> books = Helper.readBooks(Helper.JACCARD_PATH);
+        Map<String, Map<String, Double>> result = books.stream()
+                .collect(Collectors.toMap(String::toString, f -> getDistanceFromJaccardGraph(f, 0.7)));
+        //Map<String, Double> res = getDistanceFromJaccardGraph("49182-0.txt", 0.7);
+
+        System.out.println(result);
     }
 }
