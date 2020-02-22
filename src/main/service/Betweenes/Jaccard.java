@@ -2,37 +2,66 @@ package main.service.Betweenes;
 
 import main.service.utils.Helper;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 public class Jaccard {
 
-    public static double getDistance(String file1, String file2) {
-        Set<String> words1 = getAllWordsFromFile(file1);
-        Set<String> words2 = getAllWordsFromFile(file2);
-
-        Set<String> intersection = words1.stream()
-                .filter(words2::contains)
-                .collect(Collectors.toSet());
-
-        Set<String> union = Stream.of(words1, words2)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-
-        if (!union.isEmpty()) {
-            return (double) intersection.size()/union.size();
-        } else {
-            return Double.POSITIVE_INFINITY;
+    private static void createJaccardGraph() {
+        ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+        FileWriter fw;
+        BufferedWriter bw;
+        String file1;
+        String file2;
+        try {
+            double dist;
+            for (int i = 0; i < files.size(); i++) {
+                System.out.println(i);
+                file1 = files.get(i);
+                fw = new FileWriter(Helper.JACCARD_PATH +"/"+file1);
+                bw = new BufferedWriter(fw);
+                for (int j = 0; j < files.size(); j++) {
+                    if(i==j) continue;
+                    file2 = files.get(j);
+                    dist = getDistance(file1, file2);
+                    bw.write(file2+" "+dist+"\n");
+                }
+                bw.close();
+                fw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private static Set<String> getAllWordsFromFile(String filename) {
-        Set<String> words = new HashSet<>();
+    public static double getDistance(String file1, String file2) {
+        Map<String, Integer> words1 = getAllWordsFromFile(file1);
+        Map<String, Integer> words2 = getAllWordsFromFile(file2);
+        Set<String> all_words = Stream.of(words1.keySet(), words2.keySet())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
+        for (String f : all_words) {
+            if (! words1.containsKey(f)) words1.put(f,0);
+            else if (! words2.containsKey(f)) words2.put(f,0);
+        }
+
+        Integer delta = words1.keySet().stream()
+                .map(word -> Math.max(words1.get(word), words2.get(word)) - Math.min(words1.get(word), words2.get(word)))
+                .mapToInt(Integer::intValue).sum();
+
+        Integer total = words1.keySet().stream()
+                .map(word -> Math.max(words1.get(word), words2.get(word)))
+                .mapToInt(Integer::intValue).sum();
+
+        return (double) delta/total;
+    }
+
+    private static Map<String, Integer> getAllWordsFromFile(String filename) {
+        Map<String, Integer> words = new HashMap<>();
         String ligne;
 
         try {
@@ -43,7 +72,11 @@ public class Jaccard {
                     if (array.length != 0) {
                         for (int i = 0; i < array.length; i++) {
                             if (!array[i].equals("") && !array[i].equals("\n")) {
-                                words.add(array[i]);
+                                if(words.containsKey(array[i])) {
+                                    words.put(array[i], words.get(array[i])+1);
+                                } else {
+                                    words.put(array[i], 1);
+                                }
                             }
                         }
                     }
@@ -58,12 +91,29 @@ public class Jaccard {
         return words;
     }
 
-    /*public static void main(String[] args) {
+    public static double getDistanceFromJaccardGraph(String file1, String file2) {
+        double res = 0;
+        FileReader fileReader;
+        BufferedReader bufferedReader;
+        String matchedLine;
         try {
-            double dist = getDistance("91-0.txt", "36-0.txt");
-            System.out.println("Distance de jaccard : "+dist);
-        } catch (Exception e) {
+            fileReader = new FileReader(Helper.JACCARD_PATH+"/"+file1);
+            bufferedReader = new BufferedReader(fileReader);
+
+            matchedLine = bufferedReader.lines().filter(line -> line.contains(file2)).collect(Collectors.toList()).get(0);
+            res = Double.parseDouble(matchedLine.split(" ")[1]);
+
+            bufferedReader.close();
+            fileReader.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+        return res;
+    }
+
+    public static void main(String[] args) {
+        //createJaccardGraph();
+        double res = getDistanceFromJaccardGraph("49182-0.txt", "55467-0.txt");
+        System.out.println(res);
+    }
 }
