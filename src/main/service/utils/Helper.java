@@ -11,6 +11,7 @@ import java.util.Map;
 public class Helper {
 
     public static String BOOKS_PATH = "books-master";
+    public static String BOOKS_INDEX = "index";
     public static String JACCARD_PATH = "jaccard";
     public static String INDEXES_PATH = "indexes";
     public static String INDEXES_TABLES_PATH = "indexesTable";

@@ -117,9 +117,13 @@ public class Betweenness {
 	private static ArrayList<Edge> createGraph(HashMap<Integer, ResearchResult> searchResult) {
 		ArrayList<Edge> edges = new ArrayList<>();
 		double dist;
+		Map<String, Integer> words1;
+		Map<String, Integer> words2;
 		for (int i = 0; i < searchResult.keySet().size(); i++) {
+			words1 = Jaccard.getAllWordsFromIndex(searchResult.get(i).book.fileName);
 			for (int j = i+1; j < searchResult.keySet().size(); j++) {
-				dist = getDistance(searchResult.get(i).book.fileName, searchResult.get(j).book.fileName);
+				words2 = Jaccard.getAllWordsFromIndex(searchResult.get(j).book.fileName);
+				dist = getDistance(words1, words2);
 				if(dist > 0.25) {
 					edges.add(new Edge(i, j, dist));
 				}
@@ -134,12 +138,17 @@ public class Betweenness {
 			BufferedWriter bw = new BufferedWriter(writer);
 			ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
 			double dist;
+			Map<String, Integer> words1;
+			Map<String, Integer> words2;
+
 			for (int i = 0; i < books.size(); i++) {
 				String book1 = books.get(i);
+				words1 = Jaccard.getAllWordsFromIndex(book1);
 				for (int j = i+1; j < books.size(); j++) {
 					System.out.println(i+" "+j);
 					String book2 = books.get(j);
-					dist = getDistance(book1, book2);
+					words2 = Jaccard.getAllWordsFromIndex(book2);
+					dist = getDistance(words1, words2);
 					bw.write(book1+" "+book2+" "+dist+"\n");
 				}
 			}
