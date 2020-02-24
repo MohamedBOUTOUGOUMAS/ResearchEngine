@@ -20,17 +20,6 @@ public class Egrep {
 
 		int linesMatched = 0;
 
-		/*String[] array = word.split("[^a-zA-Z]");
-		if (array.length == 1) {
-			RadixTree rt = new RadixTree();
-			rt.makeTree(fileName);
-			ArrayList<Position> pos = rt.isPresent(word);
-			if (pos != null && pos.size() > 0) {
-				linesMatched.addAll(pos);
-				return new ResearchResult(Book.getEmptyBook(fileName), linesMatched);
-			}
-		}*/
-
 		Book book = new Book(fileName);
 		BufferedReader lecteurAvecBuffer;
 		try {
@@ -65,5 +54,49 @@ public class Egrep {
 
 	public static int matchLineWithKMP(String word, String line, int nbLine) {
 		return KMP.matchAll(word.toCharArray(), line.toCharArray(), nbLine);
+	}
+
+
+	public static ResearchResult matchAllWordsFast(String word, String fileName, int firstLetter, RegEx regEx, int[] retenue){
+		int nbMatched = 0;
+		Book book = Book.getEmptyBook(fileName);
+		BufferedReader lecteurAvecBuffer;
+		String ligne;
+		try {
+			lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_TABLES_PATH+"/"+fileName+"/"+firstLetter+".txt"));
+			while ((ligne = lecteurAvecBuffer.readLine()) != null) {
+				if (!ligne.equals("") && !ligne.equals("\n")) {
+					String [] ar = ligne.split(" ");
+					if (ar.length != 0) {
+						String toMatch = ar[0];
+						int nbOccurs = Integer.parseInt(ar[1]);
+						if (regEx != null){
+							int nbWords = matchLineWithAutomatFast(regEx, toMatch, nbOccurs);
+							if (nbMatched != 0 && nbWords == 0) break;
+							nbMatched += nbWords;
+						}
+						else {
+							int nbWords = matchLineWithKMPFast(word, retenue, toMatch, nbOccurs);
+							if (nbMatched != 0 && nbWords == 0) break;
+							nbMatched += nbWords;
+						}
+					}
+				}
+			}
+			lecteurAvecBuffer.close();
+
+		} catch (IOException exc) {
+			exc.printStackTrace();
+		}
+
+		return new ResearchResult(book, nbMatched);
+	}
+
+	public static int matchLineWithAutomatFast(RegEx regEx, String word, int nbOccurs) {
+		return regEx.aef.matchAllFast(word, nbOccurs);
+	}
+
+	public static int matchLineWithKMPFast(String pattern, int[] retenue, String word, int nbOccurs) {
+		return KMP.matchAllFast(pattern.toCharArray(), retenue, word, nbOccurs);
 	}
 }

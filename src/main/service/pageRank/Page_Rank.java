@@ -1,11 +1,8 @@
 package main.service.pageRank;
 
 import main.service.utils.Helper;
-import main.service.utils.ResearchResult;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Page_Rank {
@@ -15,19 +12,14 @@ public class Page_Rank {
 	public static Set<String> indexTableSet = new HashSet<>();
 	public static Map<String, Integer> fileNameIndex = new HashMap<>();
 
-	public static List<ResearchResult> researchResults;
-
-	public static void setResearchResults(List<ResearchResult> researchResults){
-		Page_Rank.researchResults = researchResults;
-	}
+	public static Map<String, Float> bookRank = new HashMap<>();
 
 	public static void readFile() {
 		BufferedReader lecteurAvecBuffer;
 	    String ligne;
-		try{
-			for (ResearchResult researchResult : researchResults) {
-				String book = researchResult.book.fileName;
-				//System.out.println(book);
+	    ArrayList<String> jaccard = Helper.readBooks(Helper.JACCARD_PATH);
+		try {
+			for (String book : jaccard) {
 				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.JACCARD_PATH+"/"+book));
 				while((ligne = lecteurAvecBuffer.readLine()) != null) {
 					String [] aretes = new String[2];
@@ -93,9 +85,7 @@ public class Page_Rank {
 		for(int k =0; k<t; k++) {
 			
 			produit = prodMatVect(adjacencyArray,A);
-			
-//			System.out.println("iteration :"+k+" P[0] "+produit[0]);
-//			System.out.println("iteration :"+k+" P[size - 1] "+produit[produit.length -1]);
+
 			float sommeDesEltDuTabProduit = 0;
 			
 			for(int i=0; i<produit.length; i++) {
@@ -115,32 +105,36 @@ public class Page_Rank {
 		return produit;
 	}
 
-	public static ArrayList<String> getRank(){
-
-		ArrayList<String> rank = new ArrayList<>();
+	public static void getRank(){
 		readFile();
-		//System.out.println(indexTableList);
 		ArrayList<Float> res = new ArrayList<>();
-
 		float [] p = powerIteration((float) 0.15, 4);
-
-		for(int i=0; i<p.length; i++) {
-			//System.out.println("p[i] : "+p[i]);
-			res.add(p[i]);
-		}
-
+		for(int i=0; i<p.length; i++) res.add(p[i]);
 		ArrayList<Float> clone = (ArrayList<Float>) res.clone();
 		Collections.sort(clone);
-
-
 		for (int i = 1; i < clone.size(); i++) {
 			Float highest = clone.get(clone.size() - i - 1);
 			int ind = res.indexOf(highest);
 			res.remove(highest);
 			String book = indexTableList.get(ind);
 			indexTableList.remove(book);
-			rank.add(book);
+			bookRank.put(book, highest);
 		}
-		return rank;
+	}
+
+
+	public static void main(String [] args){
+		getRank();
+		File pgrk = new File(Helper.PAGE_RANK_MAP);
+		pgrk.mkdir();
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(new File(Helper.PAGE_RANK_MAP+"/map"));
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(bookRank);
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

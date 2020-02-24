@@ -242,4 +242,43 @@ public class AefDeterministe {
 		}
 		return matchResult;
 	}
+
+
+	public int matchFast(String word) {
+		int currentState = 0;
+		int index = 0;
+		int matchLength = -1;
+		if (automat.fin[currentState])
+			matchLength = index;
+		for (int i = 0; i < word.length(); i++) {
+			int asciiCode = word.charAt(i);
+			if (asciiCode > 255) break;
+			Integer nextState = automat.auto[currentState][asciiCode];
+			if (nextState == null)
+				break;
+			currentState = nextState;
+			index++;
+			if (automat.fin[currentState])
+				matchLength = index;
+		}
+		return matchLength;
+	}
+
+
+
+	public int matchAllFast(String word, int nbOccurs) {
+		int i = 0;
+		int size = word.length();
+		while (i < size) {
+			String tmp = word.substring(i, size);
+			int resMatch = matchFast(tmp);
+			if(resMatch != -1) {
+				return nbOccurs;
+			}
+			else {
+				i++;
+			}
+		}
+		return 0;
+	}
 }

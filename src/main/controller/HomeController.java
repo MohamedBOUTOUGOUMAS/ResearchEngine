@@ -1,13 +1,11 @@
 package main.controller;
 
 import main.multiThreading.ThreadPool;
-import main.service.pageRank.Page_Rank;
 import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,19 +28,13 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
+        //results = ThreadPool.getResultsResearchFast(pattern);
 
         Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
 
-        /*Page_Rank.setResearchResults(results);
-        ArrayList<String> booksRank = Page_Rank.getRank();
-        List<ResearchResult> aferSort = new ArrayList<>();
-        for(String book : booksRank){
-            aferSort.add(ThreadPool.bookResearch.get(book));
-        }
-        return aferSort;*/
         return results;
     }
     @PostMapping("/advencedSearch")
@@ -53,19 +45,12 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         results = ThreadPool.getResultsResearch(pattern);
+        //results = ThreadPool.getResultsResearchFast(pattern);
 
         Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 
         //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
         //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
-
-        /*Page_Rank.setResearchResults(results);
-        ArrayList<String> booksRank = Page_Rank.getRank();
-        List<ResearchResult> aferSort = new ArrayList<>();
-        for(String book : booksRank){
-            aferSort.add(ThreadPool.bookResearch.get(book));
-        }
-        return aferSort;*/
 
         return results;
     }

@@ -119,4 +119,14 @@ public class KMP {
 
 		return re;
 	}
+
+
+	public static int matchAllFast(char[] facteur, int[] retenue, String word, int nbOccurs) {
+		char [] text = word.toCharArray();
+		//int val = match_Fast(facteur, text);
+		int val = match(facteur, retenue, text);
+		if (val == -1) return 0;
+		return nbOccurs;
+	}
+
 }

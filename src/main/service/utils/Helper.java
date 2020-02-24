@@ -13,9 +13,11 @@ public class Helper {
     public static String BOOKS_PATH = "books-master";
     public static String JACCARD_PATH = "jaccard";
     public static String INDEXES_PATH = "indexes";
-    public static String INDEXES_TABLES_PATH = "indexesTables";
+    public static String INDEXES_TABLES_PATH = "indexesTable";
     public static int NB_BOOKS = 1664;
     public static String TEST_PATH = "test";
+    public static String PAGE_RANK_MAP = "page-rank-map";
+
 
 
     public static ArrayList<String> readBooks(String path){
@@ -24,7 +26,7 @@ public class Helper {
         String liste[] = repertoire.list();
 
         if (liste != null) {
-            for (int i = 0; i < NB_BOOKS; i++) {
+            for (int i = 0; i < (liste.length > NB_BOOKS ? NB_BOOKS: liste.length); i++) {
                 books.add(liste[i]);
             }
         } else {
