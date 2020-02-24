@@ -5,9 +5,9 @@ import java.util.Map;
 public class Sommet{
 	
 	String fileName;
-	Map<String, Float> neighbor;
+	Map<String, Double> neighbor;
 	
-	public Sommet(String fileName, Map<String, Float> neighbor) {
+	public Sommet(String fileName, Map<String, Double> neighbor) {
 		this.fileName = fileName;
 		this.neighbor = neighbor;
 	}
