@@ -5,6 +5,8 @@ import main.service.utils.Helper;
 import java.io.*;
 import java.util.*;
 
+import static main.service.utils.Serialization.serialize;
+
 public class Page_Rank {
 
 	public static Map<String, Sommet> adjacencyArray = new HashMap<>();
@@ -124,7 +126,7 @@ public class Page_Rank {
 			bookRank.put(book, highest);
 		}
 	}
-
+	/*
 	public static void serialize(){
 		File pgrk = new File(Helper.PAGE_RANK_MAP);
 		pgrk.mkdir();
@@ -163,8 +165,10 @@ public class Page_Rank {
 		return map;
 	}
 
+	 */
+
 	public static void main(String [] args){
 		getRank();
-		serialize();
+		serialize("page-rank-map", "map", bookRank);
 	}
 }

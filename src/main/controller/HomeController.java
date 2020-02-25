@@ -2,16 +2,14 @@ package main.controller;
 
 import main.db.Metadata;
 import main.multiThreading.ThreadPool;
-import main.service.pageRank.Page_Rank;
+import main.service.Betweenes.Betweenness;
 import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
+import main.service.utils.Serialization;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -20,7 +18,12 @@ public class HomeController {
 
     static List<ResearchResult> results = null;
     static String pattern = null;
-    public static Map<String, Float> pageRang = Page_Rank.deserialize();
+    public static Map<String, Float> pageRang =
+            (Map<String, Float>) Serialization.deserialize("page-rank-map", "map");
+    public static Map<String, Map<String, Double>> jaccard_dists =
+            (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
+    public static Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
+            (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize("floyd-warshall", "map");
 
     @RequestMapping("/")
     public String index() {
@@ -38,15 +41,14 @@ public class HomeController {
 
         //Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 
-
         /*results.sort((o1, o2) -> {
             if (o2.pageRank > o1.pageRank) return 1;
             else if (o2.pageRank < o1.pageRank) return -1;
             return 0;
         });*/
 
-        //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
-        //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
+        // Betweennes
+        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map);
 
         List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
         Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);
@@ -71,8 +73,7 @@ public class HomeController {
             return 0;
         });*/
 
-        //List<ResearchResult> r = Betweenness.sortByBetweenes(results);
-        //System.out.println(r.stream().map(a -> a.book.fileName).collect(Collectors.toList()));
+        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map);
 
         List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
         Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);

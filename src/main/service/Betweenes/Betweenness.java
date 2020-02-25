@@ -3,18 +3,16 @@ package main.service.Betweenes;
 import main.service.utils.Book;
 import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
+import main.service.utils.Serialization;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static main.service.Betweenes.Jaccard.getDistance;
+import java.util.stream.IntStream;
 
 public class Betweenness {
 	
 	public static Integer nbPoints = Integer.MIN_VALUE;
-	public static Map<String, Map<String, Double>> allDistances = getAllDistances();
 
 	public static ArrayList<Edge> read(String path) {
 		BufferedReader lecteurAvecBuffer = null;
@@ -49,7 +47,8 @@ public class Betweenness {
 
 	}
 
-	public static ArrayList<ResearchResult> sortByBetweenes(List<ResearchResult> searchResult) {
+	public static ArrayList<ResearchResult> sortByBetweenes(List<ResearchResult> searchResult
+			, Map<String, Map<String, Double>> jaccard_dists, Map<Integer, Map<Integer, ArrayList<Integer>>> fw_map) {
 		System.out.println("sortBetweeness");
 		ArrayList<ResearchResult> sortedResult;
 		ArrayList<Edge> edges;
@@ -59,30 +58,18 @@ public class Betweenness {
 		for(int i = 0; i < searchResult.size(); i++) {
 			hashedFiles.put(i, searchResult.get(i));
 		}
-		System.out.println("BeforeCreatingGraph");
-		edges = createGraph(hashedFiles);
-		System.out.println("End reading files");
+		edges = createGraph(hashedFiles, jaccard_dists);
+
 		// compute shortestPaths
 		FloydWarshall fw = new FloydWarshall();
-		fw.calculShortestPaths(edges, searchResult.size());
-		System.out.println("End floydWarshall");
+		//fw.calculShortestPaths(edges, searchResult.size());
+        fw.setMap(fw_map);
 
 		// sort files by their betweenes
 		ArrayList<Integer> tmp = new ArrayList<>(hashedFiles.keySet());
-		Collections.sort(tmp, ((i1, i2) ->  {
-			float c1 = computeBeetweenes(i1, edges, fw, searchResult.size());
-			float c2 = computeBeetweenes(i2, edges, fw, searchResult.size());
-			if(c1 > c2) {
-				return -1;
-			} else if(c1 < c2) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}));
-		/*for (Integer i : tmp) {
-			System.out.println(i + " " +computeBeetweenes(i, edges, fw, searchResult.size()));
-		}*/
+		tmp.stream().map(i -> new AbstractMap.SimpleEntry<>(i, computeBeetweenes(i, edges, fw, searchResult.size())))
+                .sorted(Comparator.comparingDouble(Map.Entry::getValue));
+
 		sortedResult = (ArrayList<ResearchResult>) tmp.stream()
 				.map(hashedFiles::get)
 				.collect(Collectors.toList());
@@ -90,7 +77,8 @@ public class Betweenness {
 		return sortedResult;
 	}
 
-	private static ArrayList<Edge> createGraph(Map<Integer, ResearchResult> searchResult) {
+	private static ArrayList<Edge> createGraph(Map<Integer, ResearchResult> searchResult
+			, Map<String, Map<String, Double>> jaccard_dists) {
 		ArrayList<Edge> edges = new ArrayList<>();
 		String file;
 		Map<String, Integer> mapResultId = searchResult.keySet().stream()
@@ -98,8 +86,7 @@ public class Betweenness {
 
 		for (Integer i : searchResult.keySet()) {
 			file = searchResult.get(i).book.fileName;
-			System.out.println("file : "+file);
-			edges.addAll(allDistances.get(file).entrySet().parallelStream()
+			edges.addAll(jaccard_dists.get(file).entrySet().parallelStream()
 					.filter(mapResultId::containsKey)
 					.map(entry -> new Edge(i, mapResultId.get(entry.getKey()), entry.getValue()))
 					.collect(Collectors.toList()));
@@ -134,12 +121,10 @@ public class Betweenness {
 		ArrayList<String> files = Helper.readBooks(Helper.JACCARD_PATH);
 		FileReader fr;
 		BufferedReader br;
-		System.out.println("start compute distances");
 		try {
 			for (String file : files) {
 				fr = new FileReader(Helper.JACCARD_PATH+"/"+file);
 				br = new BufferedReader(fr);
-				//System.out.println(file);
 
 				file_dists = br.lines()
 						.map(line -> line.split(" ", 2))
@@ -154,23 +139,31 @@ public class Betweenness {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("end compute distances");
-
 		return result;
 	}
 
-	public static void main(String[] args) throws Exception {
-		//storeJaccardDistances("distanceJaccard.txt");
-		//Map<String, Map<String, Double>> res = getAllDistances();
+	public static Map<Integer, Map<Integer, ArrayList<Integer>>> getFloydWarshallForAllBooks() {
+		ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+		Map<Integer, ResearchResult> results = IntStream.range(0, files.size())
+				.mapToObj(i -> new AbstractMap.SimpleEntry<>(i, new ResearchResult(new Book(files.get(i)), 1)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		Map<String, Map<String, Double>> jaccard_dist =
+				(Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
+		ArrayList<Edge> edges = createGraph(results, jaccard_dist);
 
-		Map<Integer, ResearchResult> map = new HashMap<>();
-		Book book1 = new Book("36-0.txt");
-		ResearchResult res1 = new ResearchResult(book1, 1);
-		Book book2 = new Book("61.txt.utf-8");
-		ResearchResult res2 = new ResearchResult(book2, 1);
-		map.put(0, res1);
-		map.put(1, res2);
-		ArrayList<Edge> l = createGraph(map);
+		FloydWarshall fw = new FloydWarshall();
+		fw.calculShortestPaths(edges, files.size());
+		return fw.getMap();
+	}
+
+
+	public static void main(String[] args) {
+		//Map<String, Map<String, Double>> res = getAllDistances();
+		//Serialization.serialize("jaccard-map", "map", res);
+		//Map<String, Map<String, Double>> inverse =
+		//		(Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
+		Map<Integer, Map<Integer, ArrayList<Integer>>> fw_map = getFloydWarshallForAllBooks();
+		Serialization.serialize("floyd-warshall", "map", fw_map);
 		return;
 	}
 

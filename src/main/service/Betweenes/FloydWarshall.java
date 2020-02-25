@@ -15,6 +15,14 @@ public class FloydWarshall {
 	static Map<Integer, Map<Integer, ArrayList<ArrayList<Integer>>>> shortestPaths = new HashMap<>();
 	static Map<Integer, Map<Integer, ArrayList<Integer>>> nextInPaths = new HashMap<>();
 
+	public Map<Integer, Map<Integer, ArrayList<Integer>>> getMap() {
+		return nextInPaths;
+	}
+
+	public void setMap(Map<Integer, Map<Integer, ArrayList<Integer>>> nextInPath) {
+		this.nextInPaths = nextInPath;
+	}
+
 	public int[][] calculShortestPaths(ArrayList<Edge> edges, int nbPoints) {
 
 		dist = new Double[nbPoints + 1][nbPoints + 1];
