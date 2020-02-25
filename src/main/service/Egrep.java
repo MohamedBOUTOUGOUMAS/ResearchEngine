@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import main.controller.Application;
 import main.service.AEF.RegEx;
 import main.service.KMP.KMP;
 import main.service.utils.Book;

@@ -1,5 +1,7 @@
 package main.multiThreading;
 
+import main.controller.Application;
+import main.controller.HomeController;
 import main.service.AEF.RegEx;
 import main.service.KMP.KMP;
 import main.service.utils.Helper;
@@ -42,6 +44,8 @@ public class ThreadPool {
                         //bookResearch.put(researchResult.book.fileName, researchResult);
                         if (researchResult.nbMatched == 0) return null;
                         //System.out.println(researchResult.book.fileName);
+                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
@@ -81,7 +85,8 @@ public class ThreadPool {
                     try {
                         ResearchResult researchResult = futureMatched.get();
                         if (researchResult.nbMatched == 0) return null;
-                        //System.out.println(researchResult.book.fileName);
+                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();

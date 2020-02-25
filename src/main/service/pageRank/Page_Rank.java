@@ -22,13 +22,13 @@ public class Page_Rank {
 			for (String book : jaccard) {
 				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.JACCARD_PATH+"/"+book));
 				while((ligne = lecteurAvecBuffer.readLine()) != null) {
-					String [] aretes = new String[2];
+					String [] aretes;
 					aretes = ligne.split(" ", 2);
 
 					String fileNeighbor = aretes[0];
 					Double distance = Double.parseDouble(aretes[1]);
 
-					//if (distance > 0.8) continue;
+					if (distance > 0.8) continue;
 					if(adjacencyArray.containsKey(book)) {
 						adjacencyArray.get(book).neighbor.put(fileNeighbor, distance);
 					}else {
@@ -155,9 +155,6 @@ public class Page_Rank {
 			fs = new FileInputStream(new File(Helper.PAGE_RANK_MAP+"/map"));
 			ObjectInputStream ss = new ObjectInputStream(fs);
 			map = (Map<String, Float>) ss.readObject();
-			for (Map.Entry<String, Float> e: map.entrySet()) {
-				System.out.println(e.getKey()+" "+e.getValue());
-			}
 			ss.close();
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -169,6 +166,5 @@ public class Page_Rank {
 	public static void main(String [] args){
 		getRank();
 		serialize();
-		System.out.println(deserialize().size());
 	}
 }
