@@ -24,6 +24,8 @@ public class HomeController {
             (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
     public static Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
             (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize("floyd-warshall", "map");
+    public static Map<String, Integer> fw_indexes =
+            (Map<String, Integer>) Serialization.deserialize("floyd-warshall", "indexes");
 
     @RequestMapping("/")
     public String index() {
@@ -48,7 +50,7 @@ public class HomeController {
         });*/
 
         // Betweennes
-        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map);
+        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map, fw_indexes);
 
         List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
         Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);

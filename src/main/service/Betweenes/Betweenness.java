@@ -48,7 +48,8 @@ public class Betweenness {
 	}
 
 	public static ArrayList<ResearchResult> sortByBetweenes(List<ResearchResult> searchResult
-			, Map<String, Map<String, Double>> jaccard_dists, Map<Integer, Map<Integer, ArrayList<Integer>>> fw_map) {
+			, Map<String, Map<String, Double>> jaccard_dists, Map<Integer, Map<Integer, ArrayList<Integer>>> fw_map
+			, Map<String, Integer> fw_indexes) {
 		System.out.println("sortBetweeness");
 		ArrayList<ResearchResult> sortedResult;
 		ArrayList<Edge> edges;
@@ -67,7 +68,8 @@ public class Betweenness {
 
 		// sort files by their betweenes
 		ArrayList<Integer> tmp = new ArrayList<>(hashedFiles.keySet());
-		tmp.stream().map(i -> new AbstractMap.SimpleEntry<>(i, computeBeetweenes(i, edges, fw, searchResult.size())))
+		tmp.stream().map(i -> new AbstractMap.SimpleEntry<>(i,
+				computeBeetweenes(fw_indexes.get(hashedFiles.get(i).book.fileName), edges, fw, searchResult.size())))
                 .sorted(Comparator.comparingDouble(Map.Entry::getValue));
 
 		sortedResult = (ArrayList<ResearchResult>) tmp.stream()
@@ -89,6 +91,7 @@ public class Betweenness {
 			edges.addAll(jaccard_dists.get(file).entrySet().parallelStream()
 					.filter(mapResultId::containsKey)
 					.map(entry -> new Edge(i, mapResultId.get(entry.getKey()), entry.getValue()))
+					.filter(edge -> edge.dist() > 0.7)
 					.collect(Collectors.toList()));
 		}
 		return edges;
@@ -154,6 +157,9 @@ public class Betweenness {
 		FloydWarshall fw = new FloydWarshall();
 		fw.calculShortestPaths(edges, files.size());
 		Serialization.serialize("floyd-warshall", "map", fw.getMap());
+		Map<String, Integer> indexes = results.entrySet().stream()
+				.collect(Collectors.toMap(e -> e.getValue().book.fileName, Map.Entry::getKey));
+		Serialization.serialize("floyd-warshall","indexes", indexes);
 	}
 
 	public static void getJaccardMap() {
