@@ -142,10 +142,10 @@ public class Betweenness {
 		return result;
 	}
 
-	public static Map<Integer, Map<Integer, ArrayList<Integer>>> getFloydWarshallForAllBooks() {
+	public static void getFloydWarshallForAllBooks() {
 		ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
 		Map<Integer, ResearchResult> results = IntStream.range(0, files.size())
-				.mapToObj(i -> new AbstractMap.SimpleEntry<>(i, new ResearchResult(new Book(files.get(i)), 1)))
+				.mapToObj(i -> new AbstractMap.SimpleEntry<>(i, new ResearchResult(new Book(files.get(i)),1)))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		Map<String, Map<String, Double>> jaccard_dist =
 				(Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
@@ -153,17 +153,18 @@ public class Betweenness {
 
 		FloydWarshall fw = new FloydWarshall();
 		fw.calculShortestPaths(edges, files.size());
-		return fw.getMap();
+		Serialization.serialize("floyd-warshall", "map", fw.getMap());
+	}
+
+	public static void getJaccardMap() {
+		Map<String, Map<String, Double>> res = getAllDistances();
+		Serialization.serialize("jaccard-map", "map", res);
 	}
 
 
 	public static void main(String[] args) {
-		//Map<String, Map<String, Double>> res = getAllDistances();
-		//Serialization.serialize("jaccard-map", "map", res);
-		//Map<String, Map<String, Double>> inverse =
-		//		(Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
-		Map<Integer, Map<Integer, ArrayList<Integer>>> fw_map = getFloydWarshallForAllBooks();
-		Serialization.serialize("floyd-warshall", "map", fw_map);
+		getJaccardMap();
+		getFloydWarshallForAllBooks();
 		return;
 	}
 

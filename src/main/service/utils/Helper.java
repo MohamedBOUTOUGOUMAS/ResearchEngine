@@ -102,9 +102,22 @@ public class Helper {
         JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
         String pattern = null;
         for (Map.Entry<String, JsonElement> e : payload.entrySet()){
-            pattern = e.getValue().getAsString();
+            if (e.getKey().equals("regEx")) {
+                pattern = e.getValue().getAsString();
+            }
         }
         return pattern;
+    }
+
+    public static boolean getFastFromJson(String body){
+        JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
+        boolean fast = false;
+        for (Map.Entry<String, JsonElement> e : payload.entrySet()){
+            if (e.getKey().equals("fast")) {
+                fast = e.getValue().getAsBoolean();
+            }
+        }
+        return fast;
     }
 
     public static String cleanText(String ligne) {

@@ -31,13 +31,13 @@ public class HomeController {
     }
 
     @GetMapping("/search")
-    public List<ResearchResult> getResearch(@RequestParam String pattern) {
-
+    public List<ResearchResult> getResearch(@RequestParam String pattern, @RequestParam String fast) {
+        boolean speedMode = Boolean.valueOf(fast);
         List<ResearchResult> fromCach = getFromCache(pattern);
         if (fromCach != null) return fromCach;
 
-        results = ThreadPool.getResultsResearch(pattern);
-        //results = ThreadPool.getResultsResearchFast(pattern);
+        if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
+        else results = ThreadPool.getResultsResearch(pattern);
 
         //Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 
@@ -59,11 +59,14 @@ public class HomeController {
     public List<ResearchResult> getAdvencedSearch(@RequestBody String body) {
 
         String pattern = Helper.getPatternFromJson(body);
+        boolean speedMode = Helper.getFastFromJson(body);
+
         List<ResearchResult> fromCach = getFromCache(pattern);
         if (fromCach != null) return fromCach;
 
-        results = ThreadPool.getResultsResearch(pattern);
-        //results = ThreadPool.getResultsResearchFast(pattern);
+
+        if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
+        else results = ThreadPool.getResultsResearch(pattern);
 
         //Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 

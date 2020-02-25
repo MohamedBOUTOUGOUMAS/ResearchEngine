@@ -25,7 +25,7 @@ public class MatchingBook implements Callable<ResearchResult> {
             List<Line> lines = Unix4j.grep(word, file).toLineList();
             return new ResearchResult(Book.getEmptyBook(fileName), lines.size());
         }*/
-        //return Egrep.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
+        if (retenue != null) return Egrep.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
         return Egrep.matchAllWords(word, fileName, regEx);
     }
 
