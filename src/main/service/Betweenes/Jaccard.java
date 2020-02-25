@@ -101,13 +101,11 @@ public class Jaccard {
         return (double) delta/total;
     }
 
-    public static Map<String, Double> getDistanceFromJaccardGraph(String file1, double edgeThreshold) {
+    public static Map<String, Double> getDistanceFromJaccardGraph(String filename) {
         Map<String, Double> res = new HashMap<>();
-        FileReader fileReader;
-        BufferedReader bufferedReader;
         try {
-            fileReader = new FileReader(Helper.JACCARD_PATH+"/"+file1);
-            bufferedReader = new BufferedReader(fileReader);
+            FileReader fileReader = new FileReader(Helper.JACCARD_PATH + "/" + filename);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             res = bufferedReader.lines()
                     .map(line -> line.split(" "))
