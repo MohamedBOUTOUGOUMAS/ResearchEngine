@@ -18,19 +18,6 @@ public class MatchingBook implements Callable<ResearchResult> {
         this.regEx = regEx;
     }
 
-    @Override
-    public ResearchResult call() {
-        /*if (regEx != null) {
-            File file = new File(Helper.BOOKS_PATH+"/"+fileName);
-            List<Line> lines = Unix4j.grep(word, file).toLineList();
-            return new ResearchResult(Book.getEmptyBook(fileName), lines.size());
-        }*/
-        if (retenue != null) return Egrep.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
-        return Egrep.matchAllWords(word, fileName, regEx);
-    }
-
-
-
     public MatchingBook(String word, String fileName, int firstLetter, RegEx regEx, int[] retenue){
         this.word = word;
         this.fileName = fileName;
@@ -39,4 +26,15 @@ public class MatchingBook implements Callable<ResearchResult> {
         this.firstLetter = firstLetter;
     }
 
+    @Override
+    public ResearchResult call() {
+        /*if (regEx != null) {
+            File file = new File(Helper.BOOKS_PATH+"/"+fileName);
+            List<Line> lines = Unix4j.grep(word, file).toLineList();
+            return new ResearchResult(Book.getEmptyBook(fileName), lines.size());
+        }*/
+
+        if (retenue != null) return Egrep.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
+        return Egrep.matchAllWords(word, fileName, regEx);
+    }
 }

@@ -1,13 +1,14 @@
 package main.multiThreading;
 
-import main.controller.Application;
 import main.controller.HomeController;
 import main.service.AEF.RegEx;
 import main.service.KMP.KMP;
 import main.service.utils.Helper;
 import main.service.utils.ResearchResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,7 +16,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class ThreadPool {
-    //public static Map<String, ResearchResult> bookResearch;
     public static List<Future<ResearchResult>> futuresMatched;
     public static ExecutorService pool = Executors.newFixedThreadPool(50);
     public static RegEx regEx = null;
@@ -24,9 +24,7 @@ public class ThreadPool {
     public static List<ResearchResult> getResultsResearch(String pattern){
 
         if (Helper.isRegEx(pattern)) regEx = new RegEx(pattern);
-        //bookResearch = new HashMap<>();
         ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
-        //ArrayList<String> books = Helper.readBooks(Helper.TEST_PATH);
 
         futuresMatched = new ArrayList<>();
         futuresMatched.addAll(books.stream()
@@ -44,12 +42,10 @@ public class ThreadPool {
                         //bookResearch.put(researchResult.book.fileName, researchResult);
                         if (researchResult.nbMatched == 0) return null;
                         //System.out.println(researchResult.book.fileName);
-                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
-                        researchResult.pageRank = rank != null ? rank : 0F;
+                        //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        //researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (InterruptedException | ExecutionException e) {}
                     return null;
                 })
                 .filter(Objects::nonNull)
@@ -85,12 +81,10 @@ public class ThreadPool {
                     try {
                         ResearchResult researchResult = futureMatched.get();
                         if (researchResult.nbMatched == 0) return null;
-                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
-                        researchResult.pageRank = rank != null ? rank : 0F;
+                        //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        //researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (InterruptedException | ExecutionException e) {}
                     return null;
                 })
                 .filter(Objects::nonNull)

@@ -18,7 +18,7 @@ public class Serialization {
     }
 
     public static Object deserialize(String path, String filename){
-        System.out.println("Deserialization of "+path);
+        System.out.println("Deserialization of "+path+"/"+filename);
         FileInputStream fs;
         Object map = null;
         try {

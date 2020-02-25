@@ -18,14 +18,14 @@ public class HomeController {
 
     static List<ResearchResult> results = null;
     static String pattern = null;
-    public static Map<String, Float> pageRang =
-            (Map<String, Float>) Serialization.deserialize("page-rank-map", "map");
+    /*public static Map<String, Float> pageRang =
+            (Map<String, Float>) Serialization.deserialize(Helper.PAGE_RANK_MAP, "map");
     public static Map<String, Map<String, Double>> jaccard_dists =
-            (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
+            (Map<String, Map<String, Double>>) Serialization.deserialize(Helper.JACCARD_MAP, "map");
     public static Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
-            (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize("floyd-warshall", "map");
+            (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
     public static Map<String, Integer> fw_indexes =
-            (Map<String, Integer>) Serialization.deserialize("floyd-warshall", "indexes");
+            (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");*/
 
     @RequestMapping("/")
     public String index() {
@@ -34,7 +34,7 @@ public class HomeController {
 
     @GetMapping("/search")
     public List<ResearchResult> getResearch(@RequestParam String pattern, @RequestParam String fast) {
-        boolean speedMode = Boolean.valueOf(fast);
+        boolean speedMode = Boolean.parseBoolean(fast);
         List<ResearchResult> fromCach = getFromCache(pattern);
         if (fromCach != null) return fromCach;
 
@@ -78,7 +78,7 @@ public class HomeController {
             return 0;
         });*/
 
-        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map);
+        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map, fw_indexes);
 
         List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
         Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);

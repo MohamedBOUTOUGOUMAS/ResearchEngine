@@ -1,10 +1,10 @@
 package main.service.RadixTree;
 
+import main.service.utils.CleanData;
 import main.service.utils.Helper;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,23 +14,13 @@ public class Indexing {
 
 	public static void makeMap() {
 
-		BufferedReader lecteurAvecBuffer;
-		ArrayList<String> files = Helper.readBooks(Helper.INDEXES_PATH);
+		ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
 
 		for (int f=0; f<files.size(); f++){
-			Map<String, Integer> dic = new HashMap<>();
 			String book = files.get(f);
 			try {
-				lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_PATH+"/"+book));
-				String ligne;
-				while ((ligne = lecteurAvecBuffer.readLine()) != null) {
-					if (dic.containsKey(ligne)) {
-						dic.put(ligne, dic.get(ligne) + 1);
-					} else {
-						dic.put(ligne, 1);
-					}
-				}
 
+				Map<String, Integer> dic = CleanData.getAllWordsFromFile(book);
 				Map<String, Integer> result = dic.entrySet().stream().sorted(Map.Entry.comparingByKey())
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
 								LinkedHashMap::new));
@@ -54,7 +44,6 @@ public class Indexing {
 						}
 					}
 
-					lecteurAvecBuffer.close();
 					for (int i = 0; i < 26; i++) {
 						bufferedWriters[i].close();
 						fileWriters[i].close();

@@ -1,8 +1,5 @@
 package main.service.KMP;
 
-import main.service.utils.Position;
-import java.util.ArrayList;
-
 public class KMP {
 
 	public static int match(char[] facteur, int[] retenue, char[] text) {

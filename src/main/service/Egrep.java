@@ -3,14 +3,10 @@ package main.service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-
-import main.controller.Application;
 import main.service.AEF.RegEx;
 import main.service.KMP.KMP;
 import main.service.utils.Book;
 import main.service.utils.Helper;
-import main.service.utils.Position;
 import main.service.utils.ResearchResult;
 
 
@@ -18,8 +14,6 @@ public class Egrep {
 
 	public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx){
 		String filePath = Helper.BOOKS_PATH+"/"+fileName;
-		//String filePath = Helper.TEST_PATH+"/"+fileName;
-
 		int linesMatched = 0;
 
 		Book book = new Book(fileName);
@@ -87,9 +81,7 @@ public class Egrep {
 			}
 			lecteurAvecBuffer.close();
 
-		} catch (IOException exc) {
-			exc.printStackTrace();
-		}
+		} catch (IOException exc) {}
 
 		return new ResearchResult(book, nbMatched);
 	}

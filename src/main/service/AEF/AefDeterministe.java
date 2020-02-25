@@ -2,10 +2,6 @@ package main.service.AEF;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
-import static main.service.utils.Helper.cleanText;
-import static main.service.utils.Helper.readBooks;
 
 public class AefDeterministe {
 
