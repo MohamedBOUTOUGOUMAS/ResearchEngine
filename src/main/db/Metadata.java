@@ -7,6 +7,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,5 +56,21 @@ public class Metadata {
         MongoCollection<Document> books = Database.getCollection("books");
         MongoCursor<Document> cursor = books.find(Filters.eq("fileName", fileName)).cursor();
         return getListFromCursor(cursor).get(fileName);
+    }
+
+    public static List<Object> getAutoComplete(){
+        MongoCollection<Document> autoCompleteSearch = Database.getCollection("autoCompleteSearch");
+        MongoCursor<Document> cursor = autoCompleteSearch.find().cursor();
+        while (cursor.hasNext()) {
+            Document autoC = cursor.next();
+            return (List<Object>) autoC.values().toArray()[1];
+        }
+        return new ArrayList<>();
+    }
+
+    public static void addAutoCompleteSearch(String search){
+        MongoCollection<Document> autoCompleteSearch = Database.getCollection("autoCompleteSearch");
+        Document newDocument = new Document().append("$addToSet", new BasicDBObject().append("autoComplete", search));
+        autoCompleteSearch.updateOne(new Document(), newDocument, (new UpdateOptions()).upsert(true));
     }
 }

@@ -38,6 +38,8 @@ public class HomeController {
         List<ResearchResult> fromCach = getFromCache(pattern);
         if (fromCach != null) return fromCach;
 
+        Metadata.addAutoCompleteSearch(pattern);
+
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);
 
@@ -66,6 +68,8 @@ public class HomeController {
         List<ResearchResult> fromCach = getFromCache(pattern);
         if (fromCach != null) return fromCach;
 
+        Metadata.addAutoCompleteSearch(pattern);
+
 
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);
@@ -91,6 +95,12 @@ public class HomeController {
         Metadata.addClick(fileName);
         System.out.println(Metadata.getNbClickBooks());
         return Book.getBook(fileName);
+    }
+
+    @GetMapping("/autoComplete")
+    public List<Object> getAutoComplete() {
+        List<Object> autoComplete = Metadata.getAutoComplete();
+        return autoComplete;
     }
 
     public List<ResearchResult> getFromCache(String pattern){
