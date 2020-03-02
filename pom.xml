@@ -9,13 +9,13 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>spring-boot</artifactId>
+    <artifactId>researchengine</artifactId>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-boot</name>
-    <description>Demo project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
+        <start-class>main.java.controller.Application</start-class>
     </properties>
 
     <dependencies>
@@ -64,19 +64,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>   
-                    <mainClass>src.main.controller.Application</mainClass>
-                </configuration>
+                <version>2.2.5.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>
@@ -87,5 +77,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
