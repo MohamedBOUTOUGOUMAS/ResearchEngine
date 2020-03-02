@@ -74,10 +74,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>Application.class</mainClass>
-                    <layout>JAR</layout>
-                </configuration>
+                <configuration>   
+                    <mainClass>src.main.controller.Application</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

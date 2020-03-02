@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://research-engine-client.herokuapp.com/")
 @RestController
 public class HomeController {
 
@@ -100,6 +100,7 @@ public class HomeController {
     @GetMapping("/autoComplete")
     public List<Object> getAutoComplete() {
         List<Object> autoComplete = Metadata.getAutoComplete();
+        System.out.println("auto "+autoComplete);
         return autoComplete;
     }
 
