@@ -1,4 +1,4 @@
-package main.java.service.utils;
+package service.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,12 +21,10 @@ public class Helper {
     public static String FLOYD_WARSHALL = "floyd-warshall";
 
 
-
-
-    public static ArrayList<String> readBooks(String path){
+    public static ArrayList<String> readBooks(String path) {
         ArrayList<String> books = new ArrayList<>();
         File repertoire = new File(path);
-        String liste[] = repertoire.list();
+        String[] liste = repertoire.list();
 
         if (liste != null) {
             for (int i = 0; i < (Math.min(liste.length, NB_BOOKS)); i++) {
@@ -38,32 +36,32 @@ public class Helper {
         return books;
     }
 
-    public static String getTitleFromFile(String line){
-        if (line.contains("Title: ")){
-            String [] array = line.split("Title: ");
+    public static String getTitleFromFile(String line) {
+        if (line.contains("Title: ")) {
+            String[] array = line.split("Title: ");
             return array[1];
         }
         return null;
     }
 
-    public static String getAuthorFromFile(String line){
-        if (line.contains("Author: ")){
-            String [] array = line.split("Author: ");
+    public static String getAuthorFromFile(String line) {
+        if (line.contains("Author: ")) {
+            String[] array = line.split("Author: ");
             return array[1];
         }
         return null;
     }
 
-    public static String getReleaseDateFromFile(String line){
-        if (line.contains("Release Date: ")){
-            String [] array = line.split("Release Date: ");
+    public static String getReleaseDateFromFile(String line) {
+        if (line.contains("Release Date: ")) {
+            String[] array = line.split("Release Date: ");
             return array[1];
         }
         return null;
     }
 
-    public static boolean decorateBookWithTitle(String ligne, Book book, boolean findTitle){
-        if (!findTitle){
+    public static boolean decorateBookWithTitle(String ligne, Book book, boolean findTitle) {
+        if (!findTitle) {
             String title = Helper.getTitleFromFile(ligne);
             if (title != null) {
                 book.title = title;
@@ -73,8 +71,8 @@ public class Helper {
         return false;
     }
 
-    public static boolean decorateBookWithAuthor(String ligne, Book book, boolean findAuthor){
-        if (!findAuthor){
+    public static boolean decorateBookWithAuthor(String ligne, Book book, boolean findAuthor) {
+        if (!findAuthor) {
             String autor = Helper.getAuthorFromFile(ligne);
             if (autor != null) {
                 book.author = autor;
@@ -84,8 +82,8 @@ public class Helper {
         return false;
     }
 
-    public static boolean decorateBookWithReleaseDate(String ligne, Book book, boolean findReleaseDate){
-        if (!findReleaseDate){
+    public static boolean decorateBookWithReleaseDate(String ligne, Book book, boolean findReleaseDate) {
+        if (!findReleaseDate) {
             String releaseDate = Helper.getReleaseDateFromFile(ligne);
             if (releaseDate != null) {
                 book.releaseDate = releaseDate;
@@ -96,14 +94,13 @@ public class Helper {
     }
 
     public static boolean isRegEx(String word) {
-        if (word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".")) return true;
-        return false;
+        return word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".");
     }
 
-    public static String getPatternFromJson(String body){
+    public static String getPatternFromJson(String body) {
         JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
         String pattern = null;
-        for (Map.Entry<String, JsonElement> e : payload.entrySet()){
+        for (Map.Entry<String, JsonElement> e : payload.entrySet()) {
             if (e.getKey().equals("regEx")) {
                 pattern = e.getValue().getAsString();
             }
@@ -111,10 +108,10 @@ public class Helper {
         return pattern;
     }
 
-    public static boolean getFastFromJson(String body){
+    public static boolean getFastFromJson(String body) {
         JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
         boolean fast = false;
-        for (Map.Entry<String, JsonElement> e : payload.entrySet()){
+        for (Map.Entry<String, JsonElement> e : payload.entrySet()) {
             if (e.getKey().equals("fast")) {
                 fast = e.getValue().getAsBoolean();
             }

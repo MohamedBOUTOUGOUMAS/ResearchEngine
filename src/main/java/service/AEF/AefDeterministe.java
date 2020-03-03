@@ -1,280 +1,275 @@
-package main.java.service.AEF;
+package service.AEF;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 public class AefDeterministe {
 
-	public Automat automat;
+    static Set<Integer> visited = new HashSet<Integer>();
+    public Automat automat;
 
-	static Set<Integer> visited = new HashSet<Integer>();
+    public AefDeterministe(Automat a) {
+        this.automat = makeDeterministe(a);
+    }
 
-	public AefDeterministe(Automat a) {
-		this.automat = makeDeterministe(a);
-	}
+    public static Set<Integer> epsilonFermeture(Automat a, Integer state) {
+        Set<Integer> ef = new HashSet<Integer>();
+        Integer e1 = null;
+        Integer e2 = null;
 
-	public String toString() {
-		return automat.toString();
-	}
+        if (a.epsilon[state][0] != null) {
+            e1 = a.epsilon[state][0];
+            ef.add(e1);
+            ef.addAll(epsilonFermeture(a, e1));
+        }
 
-	public static Set<Integer> epsilonFermeture(Automat a, Integer state) {
-		Set<Integer> ef = new HashSet<Integer>();
-		Integer e1 = null;
-		Integer e2 = null;
+        if (a.epsilon[state][1] != null) {
+            e2 = a.epsilon[state][1];
+            ef.add(e2);
+            ef.addAll(epsilonFermeture(a, e2));
+        }
+        return ef;
 
-		if (a.epsilon[state][0] != null) {
-			e1 = a.epsilon[state][0];
-			ef.add(e1);
-			ef.addAll(epsilonFermeture(a, e1));
-		}
+    }
 
-		if (a.epsilon[state][1] != null) {
-			e2 = a.epsilon[state][1];
-			ef.add(e2);
-			ef.addAll(epsilonFermeture(a, e2));
-		}
-		return ef;
+    public static Set<Integer> alphaFermeture(Automat a, Integer state, Integer alpha) {
 
-	}
+        Set<Integer> af = new HashSet<Integer>();
+        if (visited.contains(state))
+            return af;
 
-	public static Set<Integer> alphaFermeture(Automat a, Integer state, Integer alpha) {
+        visited.add(state);
 
-		Set<Integer> af = new HashSet<Integer>();
-		if (visited.contains(state))
-			return af;
+        Integer e = a.auto[state][alpha];
+        if (e != null) {
+            af.add(e);
+            af.addAll(epsilonFermeture(a, e));
 
-		visited.add(state);
+            int i = 0;
+            int siz = af.size();
+            while (i < siz) {
+                Iterator<Integer> it = af.iterator();
+                for (int j = 0; j < i; j++) {
+                    it.next();
+                }
+                Integer item = it.next();
+                af.addAll(alphaFermeture(a, item, alpha));
+                siz = af.size();
+                i++;
+            }
+        }
 
-		Integer e = a.auto[state][alpha];
-		if (e != null) {
-			af.add(e);
-			af.addAll(epsilonFermeture(a, e));
+        return af;
+    }
 
-			int i = 0;
-			int siz = af.size();
-			while (i < siz) {
-				Iterator<Integer> it = af.iterator();
-				for (int j = 0; j < i; j++) {
-					it.next();
-				}
-				Integer item = it.next();
-				af.addAll(alphaFermeture(a, item, alpha));
-				siz = af.size();
-				i++;
-			}
-		}
+    public static String toStringMaison(Set<Integer> ef) {
 
-		return af;
-	}
+        String et = "";
+        for (Integer ie : ef) {
+            et += ie + ",";
+        }
+        if (et.length() > 1) {
+            et = et.substring(0, et.length() - 1);
+        }
 
-	public static String toStringMaison(Set<Integer> ef) {
+        return et;
+    }
 
-		String et = "";
-		for (Integer ie : ef) {
-			et += ie + ",";
-		}
-		if (et.length() > 1) {
-			et = et.substring(0, et.length() - 1);
-		}
+    public static boolean equalsStats(String e1, String e2) {
 
-		return et;
-	}
+        char[] t1 = e1.trim().toCharArray();
+        Arrays.sort(t1);
+        char[] t2 = e2.trim().toCharArray();
+        Arrays.sort(t2);
 
-	public static boolean equalsStats(String e1, String e2) {
+        if (t1.length != t2.length) {
+            return false;
+        }
 
-		char[] t1 = e1.trim().toCharArray();
-		Arrays.sort(t1);
-		char[] t2 = e2.trim().toCharArray();
-		Arrays.sort(t2);
+        for (int i = 0; i < t1.length; i++) {
+            if (t1[i] != t2[i]) {
 
-		if (t1.length != t2.length) {
-			return false;
-		}
+                return false;
 
-		for (int i = 0; i < t1.length; i++) {
-			if (t1[i] != t2[i]) {
+            }
+        }
+        return true;
+    }
 
-				return false;
+    public static boolean containsMaison(ArrayList<String> explored, String et) {
+        for (String e : explored) {
+            if (equalsStats(e, et)) {
+                return true;
+            }
 
-			}
-		}
-		return true;
-	}
+        }
+        return false;
+    }
 
-	public static boolean containsMaison(ArrayList<String> explored, String et) {
-		for (String e : explored) {
-			if (equalsStats(e, et)) {
-				return true;
-			}
+    public static Automat makeDeterministe(Automat a) {
 
-		}
-		return false;
-	}
+        ArrayList<String> etats = new ArrayList<>();
+        ArrayList<String> explored = new ArrayList<>();
+        Set<Integer> ef = epsilonFermeture(a, 0);
+        ef.add(0);
+        String etat = toStringMaison(ef);
+        Map<String, ArrayList<Tuple>> trans = new HashMap<>();
+        etats.add(etat);
+        int siz = etats.size();
+        int k = 0;
+        while (k < siz) {
+            String et = etats.get(k);
+            if (!containsMaison(explored, et)) {
+                explored.add(et);
+                for (int alpha = 0; alpha < a.auto[0].length; alpha++) {
 
-	public static Automat makeDeterministe(Automat a) {
+                    Set<Integer> af = new HashSet<>();
+                    String[] ets = et.split(",");
 
-		ArrayList<String> etats = new ArrayList<>();
-		ArrayList<String> explored = new ArrayList<>();
-		Set<Integer> ef = epsilonFermeture(a, 0);
-		ef.add(0);
-		String etat = toStringMaison(ef);
-		Map<String, ArrayList<Tuple>> trans = new HashMap<>();
-		etats.add(etat);
-		int siz = etats.size();
-		int k = 0;
-		while (k < siz) {
-			String et = etats.get(k);
-			if (!containsMaison(explored, et)) {
-				explored.add(et);
-				for (int alpha = 0; alpha < a.auto[0].length; alpha++) {
+                    for (int i = 0; i < ets.length; i++) {
+                        String c = ets[i];
+                        Set<Integer> tmp = alphaFermeture(a, Integer.parseInt(c), alpha);
+                        af.addAll(tmp);
+                    }
 
-					Set<Integer> af = new HashSet<>();
-					String[] ets = et.split(",");
+                    visited.clear();
+                    String newEtat = toStringMaison(af);
+                    if (newEtat.length() > 0) {
 
-					for (int i = 0; i < ets.length; i++) {
-						String c = ets[i];
-						Set<Integer> tmp = alphaFermeture(a, Integer.parseInt(c), alpha);
-						af.addAll(tmp);
-					}
+                        etats.add(newEtat);
+                        siz++;
+                        if (trans.containsKey(et)) {
+                            trans.get(et).add(new Tuple(newEtat, alpha));
+                        } else {
+                            ArrayList<Tuple> l = new ArrayList<>();
+                            l.add(new Tuple(newEtat, alpha));
+                            trans.put(et, l);
+                        }
+                    }
 
-					visited.clear();
-					String newEtat = toStringMaison(af);
-					if (newEtat.length() > 0) {
+                }
+            }
+            k++;
+        }
 
-						etats.add(newEtat);
-						siz++;
-						if (trans.containsKey(et)) {
-							trans.get(et).add(new Tuple(newEtat, alpha));
-						} else {
-							ArrayList<Tuple> l = new ArrayList<>();
-							l.add(new Tuple(newEtat, alpha));
-							trans.put(et, l);
-						}
-					}
+        Integer[][] auto = new Integer[explored.size()][a.auto[0].length];
+        Automat automat = new Automat(a.root, null, null);
+        automat.fin = new boolean[explored.size()];
+        automat.init = new boolean[explored.size()];
+        Map<String, Integer> dic = new HashMap<>();
 
-				}
-			}
-			k++;
-		}
+        for (int i = 0; i < explored.size(); i++) {
+            dic.put(explored.get(i), i);
+            for (int j = 0; j < a.fin.length; j++) {
+                String[] tab = explored.get(i).split(",");
+                for (int l = 0; l < tab.length; l++) {
+                    if (tab[l].equals(String.valueOf(j)) && a.fin[j]) {
+                        automat.fin[i] = true;
+                    }
+                }
 
-		Integer[][] auto = new Integer[explored.size()][a.auto[0].length];
-		Automat automat = new Automat(a.root, null, null);
-		automat.fin = new boolean[explored.size()];
-		automat.init = new boolean[explored.size()];
-		Map<String, Integer> dic = new HashMap<>();
+            }
+            if (!automat.fin[i]) {
+                automat.fin[i] = false;
+            }
+        }
 
-		for (int i = 0; i < explored.size(); i++) {
-			dic.put(explored.get(i), i);
-			for (int j = 0; j < a.fin.length; j++) {
-				String[] tab = explored.get(i).split(",");
-				for (int l = 0; l < tab.length; l++) {
-					if (tab[l].equals(String.valueOf(j)) && a.fin[j]) {
-						automat.fin[i] = true;
-					}
-				}
+        for (Entry<String, ArrayList<Tuple>> e : trans.entrySet()) {
+            String et = e.getKey();
+            for (int i = 0; i < e.getValue().size(); i++) {
+                int alpha = e.getValue().get(i).alpha;
+                String etatDest = e.getValue().get(i).etat;
+                auto[dic.get(et)][alpha] = dic.get(etatDest);
+            }
+        }
 
-			}
-			if (!automat.fin[i]) {
-				automat.fin[i] = false;
-			}
-		}
+        automat.auto = auto;
 
-		for (Entry<String, ArrayList<Tuple>> e : trans.entrySet()) {
-			String et = e.getKey();
-			for (int i = 0; i < e.getValue().size(); i++) {
-				int alpha = e.getValue().get(i).alpha;
-				String etatDest = e.getValue().get(i).etat;
-				auto[dic.get(et)][alpha] = dic.get(etatDest);
-			}
-		}
+        automat.init[0] = true;
+        for (int i = 1; i < automat.auto.length; i++) {
+            automat.init[i] = false;
+        }
 
-		automat.auto = auto;
+        return automat;
 
-		automat.init[0] = true;
-		for (int i = 1; i < automat.auto.length; i++) {
-			automat.init[i] = false;
-		}
+    }
 
-		return automat;
+    public String toString() {
+        return automat.toString();
+    }
 
-	}
-
-	public int match(String word) {
-		int currentState = 0;
-		int index = 0;
-		int matchLength = -1;
-		if (automat.fin[currentState])
-			matchLength = index;
-		for (int i = 0; i < word.length(); i++) {
-			int asciiCode = word.charAt(i);
-			if (asciiCode > 255) break;
-			Integer nextState = automat.auto[currentState][asciiCode];
-			if (nextState == null)
-				break;
-			currentState = nextState;
-			index++;
-			if (automat.fin[currentState])
-				matchLength = index;
-		}
-		return matchLength;
-	}
-
+    public int match(String word) {
+        int currentState = 0;
+        int index = 0;
+        int matchLength = -1;
+        if (automat.fin[currentState])
+            matchLength = index;
+        for (int i = 0; i < word.length(); i++) {
+            int asciiCode = word.charAt(i);
+            if (asciiCode > 255) break;
+            Integer nextState = automat.auto[currentState][asciiCode];
+            if (nextState == null)
+                break;
+            currentState = nextState;
+            index++;
+            if (automat.fin[currentState])
+                matchLength = index;
+        }
+        return matchLength;
+    }
 
 
-	public int matchAll(String ligne, int l) {
-		int matchResult = 0;
-		int i = 0;
-		int size = ligne.length();
-		while (i < size) {
-			String tmp = ligne.substring(i, size);
-			int matchLength = match(tmp);
-			if(matchLength != -1) {
-				matchResult += 1;
-				i += matchLength;
-			}
-			else {
-				i++;
-			}
-		}
-		return matchResult;
-	}
+    public int matchAll(String ligne, int l) {
+        int matchResult = 0;
+        int i = 0;
+        int size = ligne.length();
+        while (i < size) {
+            String tmp = ligne.substring(i, size);
+            int matchLength = match(tmp);
+            if (matchLength != -1) {
+                matchResult += 1;
+                i += matchLength;
+            } else {
+                i++;
+            }
+        }
+        return matchResult;
+    }
 
 
-	public int matchFast(String word) {
-		int currentState = 0;
-		int index = 0;
-		int matchLength = -1;
-		if (automat.fin[currentState])
-			matchLength = index;
-		for (int i = 0; i < word.length(); i++) {
-			int asciiCode = word.charAt(i);
-			if (asciiCode > 255) break;
-			Integer nextState = automat.auto[currentState][asciiCode];
-			if (nextState == null)
-				break;
-			currentState = nextState;
-			index++;
-			if (automat.fin[currentState])
-				matchLength = index;
-		}
-		return matchLength;
-	}
+    public int matchFast(String word) {
+        int currentState = 0;
+        int index = 0;
+        int matchLength = -1;
+        if (automat.fin[currentState])
+            matchLength = index;
+        for (int i = 0; i < word.length(); i++) {
+            int asciiCode = word.charAt(i);
+            if (asciiCode > 255) break;
+            Integer nextState = automat.auto[currentState][asciiCode];
+            if (nextState == null)
+                break;
+            currentState = nextState;
+            index++;
+            if (automat.fin[currentState])
+                matchLength = index;
+        }
+        return matchLength;
+    }
 
 
-
-	public int matchAllFast(String word, int nbOccurs) {
-		int i = 0;
-		int size = word.length();
-		while (i < size) {
-			String tmp = word.substring(i, size);
-			int resMatch = matchFast(tmp);
-			if(resMatch != -1) {
-				return nbOccurs;
-			}
-			else {
-				i++;
-			}
-		}
-		return 0;
-	}
+    public int matchAllFast(String word, int nbOccurs) {
+        int i = 0;
+        int size = word.length();
+        while (i < size) {
+            String tmp = word.substring(i, size);
+            int resMatch = matchFast(tmp);
+            if (resMatch != -1) {
+                return nbOccurs;
+            } else {
+                i++;
+            }
+        }
+        return 0;
+    }
 }

@@ -1,4 +1,4 @@
-package main.java.service.Betweenes;
+package service.Betweenes;
 
 public class Jaccard {
 

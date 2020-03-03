@@ -1,9 +1,9 @@
-package main.java.multiThreading;
+package multiThreading;
 
-import main.java.service.AEF.RegEx;
-import main.java.service.KMP.KMP;
-import main.java.service.utils.Helper;
-import main.java.service.utils.ResearchResult;
+import service.AEF.RegEx;
+import service.KMP.KMP;
+import service.utils.Helper;
+import service.utils.ResearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ThreadPool {
     public static RegEx regEx = null;
     public static int[] retenue = {};
 
-    public static List<ResearchResult> getResultsResearch(String pattern){
+    public static List<ResearchResult> getResultsResearch(String pattern) {
 
         if (Helper.isRegEx(pattern)) regEx = new RegEx(pattern);
         ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
@@ -44,7 +44,8 @@ public class ThreadPool {
                         //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
                         //researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
-                    } catch (InterruptedException | ExecutionException e) {}
+                    } catch (InterruptedException | ExecutionException e) {
+                    }
                     return null;
                 })
                 .filter(Objects::nonNull)
@@ -55,11 +56,11 @@ public class ThreadPool {
     }
 
 
-    public static List<ResearchResult> getResultsResearchFast(String pattern){
+    public static List<ResearchResult> getResultsResearchFast(String pattern) {
 
-        if (Helper.isRegEx(pattern)){
+        if (Helper.isRegEx(pattern)) {
             regEx = new RegEx(pattern);
-        }else {
+        } else {
             retenue = KMP.calculRetenue(pattern.toCharArray());
         }
 
@@ -83,7 +84,8 @@ public class ThreadPool {
                         //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
                         //researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
-                    } catch (InterruptedException | ExecutionException e) {}
+                    } catch (InterruptedException | ExecutionException e) {
+                    }
                     return null;
                 })
                 .filter(Objects::nonNull)

@@ -1,8 +1,9 @@
-package main.java.multiThreading;
+package multiThreading;
 
-import main.java.service.AEF.RegEx;
-import main.java.service.Egrep;
-import main.java.service.utils.ResearchResult;
+import service.AEF.RegEx;
+import service.Egrep;
+import service.utils.ResearchResult;
+
 import java.util.concurrent.Callable;
 
 public class MatchingBook implements Callable<ResearchResult> {
@@ -12,13 +13,13 @@ public class MatchingBook implements Callable<ResearchResult> {
     public int[] retenue;
     public int firstLetter;
 
-    public MatchingBook(String word, String fileName, RegEx regEx){
+    public MatchingBook(String word, String fileName, RegEx regEx) {
         this.word = word;
         this.fileName = fileName;
         this.regEx = regEx;
     }
 
-    public MatchingBook(String word, String fileName, int firstLetter, RegEx regEx, int[] retenue){
+    public MatchingBook(String word, String fileName, int firstLetter, RegEx regEx, int[] retenue) {
         this.word = word;
         this.fileName = fileName;
         this.regEx = regEx;

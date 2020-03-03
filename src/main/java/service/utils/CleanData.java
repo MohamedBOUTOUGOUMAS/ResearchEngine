@@ -1,4 +1,4 @@
-package main.java.service.utils;
+package service.utils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ public class CleanData {
 
     private static void booksToIndex() {
         ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
-        for(String file : files) {
+        for (String file : files) {
             System.out.println(file);
             storeIndexTable(getAllWordsFromFile(file), file);
         }
@@ -17,10 +17,10 @@ public class CleanData {
 
     private static void storeIndexTable(Map<String, Integer> map, String file) {
         try {
-            FileWriter fw = new FileWriter(Helper.BOOKS_INDEX+"/"+file);
+            FileWriter fw = new FileWriter(Helper.BOOKS_INDEX + "/" + file);
             BufferedWriter bw = new BufferedWriter(fw);
             for (String word : map.keySet()) {
-                bw.write(word+" "+map.get(word)+"\n");
+                bw.write(word + " " + map.get(word) + "\n");
             }
             bw.close();
             fw.close();
@@ -34,15 +34,15 @@ public class CleanData {
         String ligne;
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(Helper.BOOKS_PATH +"/"+filename));
+            BufferedReader reader = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + filename));
             while ((ligne = reader.readLine()) != null) {
                 if (!ligne.equals("") && !ligne.equals("\n")) {
                     String[] array = ligne.split("[^a-zA-Z]");
                     if (array.length != 0) {
                         for (int i = 0; i < array.length; i++) {
                             if (!array[i].equals("") && !array[i].equals("\n")) {
-                                if(words.containsKey(array[i])) {
-                                    words.put(array[i], words.get(array[i])+1);
+                                if (words.containsKey(array[i])) {
+                                    words.put(array[i], words.get(array[i]) + 1);
                                 } else {
                                     words.put(array[i], 1);
                                 }

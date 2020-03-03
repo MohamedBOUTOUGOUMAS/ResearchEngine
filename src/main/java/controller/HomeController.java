@@ -1,19 +1,21 @@
-package main.java.controller;
+package controller;
 
-import main.java.db.Metadata;
-import main.java.multiThreading.ThreadPool;
-import main.java.service.utils.Book;
-import main.java.service.utils.Helper;
-import main.java.service.utils.ResearchResult;
+import db.Metadata;
+import multiThreading.ThreadPool;
+import service.utils.Book;
+import service.utils.Helper;
+import service.utils.ResearchResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://research-engine-client.herokuapp.com/")
+//@CrossOrigin(origins = "https://research-engine-client.herokuapp.com/")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
-
+    static List<Object> autoComplete = null;
     static List<ResearchResult> results = null;
     static String pattern = null;
     /*public static Map<String, Float> pageRang =
@@ -37,7 +39,7 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         Metadata.addAutoCompleteSearch(pattern);
-
+        autoComplete.add(pattern);
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);
 
@@ -57,6 +59,7 @@ public class HomeController {
         results.sort((o1, o2) -> nbClick.get(o2.book.fileName) - nbClick.get(o1.book.fileName));
         return results;
     }
+
     @PostMapping("/advencedSearch")
     public List<ResearchResult> getAdvencedSearch(@RequestBody String body) {
 
@@ -67,7 +70,7 @@ public class HomeController {
         if (fromCach != null) return fromCach;
 
         Metadata.addAutoCompleteSearch(pattern);
-
+        autoComplete.add(pattern);
 
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);
@@ -97,12 +100,12 @@ public class HomeController {
 
     @GetMapping("/autoComplete")
     public List<Object> getAutoComplete() {
-        List<Object> autoComplete = Metadata.getAutoComplete();
-        System.out.println("auto "+autoComplete);
+        if (autoComplete == null) autoComplete = Metadata.getAutoComplete();
+        System.out.println("auto " + autoComplete);
         return autoComplete;
     }
 
-    public List<ResearchResult> getFromCache(String pattern){
+    public List<ResearchResult> getFromCache(String pattern) {
         if (HomeController.pattern != null && HomeController.pattern.equals(pattern)) return results;
         HomeController.pattern = pattern;
         return null;

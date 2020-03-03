@@ -1,4 +1,4 @@
-package main.java.service.utils;
+package service.utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,16 +11,17 @@ public class Book {
     public String fileName;
     public String releaseDate;
     public ArrayList<String> content;
+
     public Book(String fileName) {
         this.fileName = fileName;
         this.content = new ArrayList<>();
     }
 
-    public static Book getBook(String fileName){
+    public static Book getBook(String fileName) {
         BufferedReader lecteurAvecBuffer;
         Book book = new Book(fileName);
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+fileName));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
             String line;
             boolean findTitle = false;
             boolean findAuthor = false;
@@ -37,11 +38,11 @@ public class Book {
         return book;
     }
 
-    public static Book getEmptyBook(String fileName){
+    public static Book getEmptyBook(String fileName) {
         BufferedReader lecteurAvecBuffer;
         Book book = new Book(fileName);
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH+"/"+fileName));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
             String line;
             boolean findTitle = false;
             boolean findAuthor = false;

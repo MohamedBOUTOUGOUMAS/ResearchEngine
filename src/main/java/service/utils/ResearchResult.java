@@ -1,4 +1,4 @@
-package main.java.service.utils;
+package service.utils;
 
 public class ResearchResult {
 
@@ -6,7 +6,7 @@ public class ResearchResult {
     public int nbMatched;
     public Float pageRank = 0F;
 
-    public ResearchResult(Book book, int nbMatched){
+    public ResearchResult(Book book, int nbMatched) {
         this.book = book;
         this.nbMatched = nbMatched;
     }
