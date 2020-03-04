@@ -22,13 +22,12 @@ public class ThreadPool {
 
     public static List<ResearchResult> getResultsResearch(String pattern) {
 
-        if (Helper.isRegEx(pattern)) regEx = new RegEx(pattern);
         ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
 
         futuresMatched = new ArrayList<>();
         futuresMatched.addAll(books.stream()
                 .map(book -> {
-                    MatchingBook matchingBook = new MatchingBook(pattern, book, regEx);
+                    MatchingBook matchingBook = new MatchingBook(pattern, book);
                     return pool.submit(matchingBook);
                 })
                 .collect(Collectors.toList())

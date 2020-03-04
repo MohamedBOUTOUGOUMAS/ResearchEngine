@@ -1,1 +1,2 @@
-web:    java -jar target/researchengine-0.0.1-SNAPSHOT.jar
+worker:    mongod
+web:       java -jar target/researchengine-0.0.1-SNAPSHOT.jar

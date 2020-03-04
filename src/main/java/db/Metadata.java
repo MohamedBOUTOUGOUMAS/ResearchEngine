@@ -7,10 +7,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Metadata {
 
@@ -58,14 +55,14 @@ public class Metadata {
         return getListFromCursor(cursor).get(fileName);
     }
 
-    public static List<Object> getAutoComplete() {
+    public static Set<String> getAutoComplete() {
         MongoCollection<Document> autoCompleteSearch = Database.getCollection("autoCompleteSearch");
         MongoCursor<Document> cursor = autoCompleteSearch.find().cursor();
         while (cursor.hasNext()) {
             Document autoC = cursor.next();
-            return (List<Object>) autoC.values().toArray()[1];
+            return new HashSet<> ((List<String>) autoC.values().toArray()[1]);
         }
-        return new ArrayList<>();
+        return new HashSet<>();
     }
 
     public static void addAutoCompleteSearch(String search) {
