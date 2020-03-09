@@ -1,4 +1,4 @@
-FROM springio/spring-mongo-base
+FROM openjdk:8-jdk-alpine
 
 EXPOSE 8080
 

@@ -7,17 +7,14 @@ import service.utils.Helper;
 import service.utils.ResearchResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
-    static Set<String> autoComplete = null;
+    static Set<String> autoComplete;
     static List<ResearchResult> results = null;
     static String pattern = null;
     /*public static Map<String, Float> pageRang =
