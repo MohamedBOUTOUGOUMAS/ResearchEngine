@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 //@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
-    static Set<String> autoComplete;
+    static Set<String> autoComplete = new HashSet<>();
     static List<ResearchResult> results = null;
     static String pattern = null;
     public static Map<String, Float> pageRang =
