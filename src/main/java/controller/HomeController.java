@@ -34,12 +34,13 @@ public class HomeController {
     @GetMapping("/search")
     public List<ResearchResult> getResearch(@RequestParam String pattern, @RequestParam String fast) {
         boolean speedMode = Boolean.parseBoolean(fast);
-        List<ResearchResult> fromCach = getFromCache(pattern);
-        if (fromCach != null) return fromCach;
+        List<ResearchResult> fromCache = getFromCache(pattern);
+        if (fromCache != null) return fromCache;
 
-        if (autoComplete != null && !autoComplete.contains(pattern))
+        if (autoComplete != null && !autoComplete.contains(pattern)) {
             Metadata.addAutoCompleteSearch(pattern);
-        autoComplete.add(pattern);
+            autoComplete.add(pattern);
+        }
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);
 
@@ -66,12 +67,13 @@ public class HomeController {
         String pattern = Helper.getPatternFromJson(body);
         boolean speedMode = Helper.getFastFromJson(body);
 
-        List<ResearchResult> fromCach = getFromCache(pattern);
-        if (fromCach != null) return fromCach;
+        List<ResearchResult> fromCache = getFromCache(pattern);
+        if (fromCache != null) return fromCache;
 
-        if (autoComplete != null && !autoComplete.contains(pattern))
+        if (autoComplete != null && !autoComplete.contains(pattern)){
             Metadata.addAutoCompleteSearch(pattern);
-        autoComplete.add(pattern);
+            autoComplete.add(pattern);
+        }
 
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern);
         else results = ThreadPool.getResultsResearch(pattern);

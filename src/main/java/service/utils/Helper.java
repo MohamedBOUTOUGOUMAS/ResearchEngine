@@ -19,6 +19,8 @@ public class Helper {
     public static int NB_BOOKS = 1664;
     public static String PAGE_RANK_MAP = "page-rank-map";
     public static String FLOYD_WARSHALL = "floyd-warshall";
+    public static String COLLECTION = "Collection_";
+
 
 
     public static ArrayList<String> readBooks(String path) {
@@ -130,6 +132,11 @@ public class Helper {
         ligne = ligne.replaceAll("\\p{C}", "");
         ligne = ligne.trim();
         return ligne;
+    }
+
+    public static String getFileName(String file){
+        String[] tokens = file.split("\\.");
+        return tokens[0];
     }
 
 }

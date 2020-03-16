@@ -1,7 +1,9 @@
 package multiThreading;
 
+import db.Database;
 import service.AEF.RegEx;
 import service.KMP.KMP;
+import service.utils.Book;
 import service.utils.Helper;
 import service.utils.ResearchResult;
 
@@ -65,16 +67,26 @@ public class ThreadPool {
 
         ArrayList<String> books = Helper.readBooks(Helper.INDEXES_TABLES_PATH);
         futuresMatched = new ArrayList<>();
-        futuresMatched.addAll(books.stream()
+
+        int asciiCode = (pattern.toUpperCase().charAt(0) - 65);
+
+        List<ResearchResult> results = new ArrayList<>();
+
+        for(String book : Database.matchDB(asciiCode, pattern)){
+            results.add(new ResearchResult(Book.getEmptyBook(book), (int) (Math.random() * 100)));
+        }
+
+        return results;
+
+        /*futuresMatched.addAll(books.stream()
                 .map(fileName -> {
-                    int asciiCode = (pattern.toUpperCase().charAt(0) - 65);
                     MatchingBook matchingBook = new MatchingBook(pattern, fileName, asciiCode, regEx, retenue);
                     return pool.submit(matchingBook);
                 })
                 .collect(Collectors.toList())
         );
 
-        List<ResearchResult> results = futuresMatched
+        results = futuresMatched
                 .stream()
                 .map(futureMatched -> {
                     try {
@@ -91,6 +103,6 @@ public class ThreadPool {
                 .collect(Collectors.toList());
 
         if (regEx != null) regEx = null;
-        return results;
+        return results;*/
     }
 }

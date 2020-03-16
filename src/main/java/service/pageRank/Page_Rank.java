@@ -32,7 +32,7 @@ public class Page_Rank {
                     String fileNeighbor = aretes[0];
                     Double distance = Double.parseDouble(aretes[1]);
 
-                    if (distance > 0.8) continue;
+                    if (distance < 0.5) continue;
                     if (adjacencyArray.containsKey(book)) {
                         adjacencyArray.get(book).neighbor.put(fileNeighbor, distance);
                     } else {

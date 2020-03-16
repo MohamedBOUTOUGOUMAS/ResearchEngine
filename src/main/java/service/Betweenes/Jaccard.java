@@ -1,8 +1,16 @@
 package service.Betweenes;
 
+import service.utils.CleanData;
+import service.utils.Helper;
+
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class Jaccard {
 
-    /*private static void createJaccardGraph() {
+    private static void createJaccardGraph() {
         Map<String, Map<String, Integer>> mapFiles = new HashMap<>();
         Map<String, Double> distanceMap = new HashMap<>();
         ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
@@ -21,7 +29,7 @@ public class Jaccard {
                 if (mapFiles.containsKey(file1))
                     words1 = mapFiles.get(file1);
                 else {
-                    words1 = getAllWordsFromFile(file1);
+                    words1 = CleanData.getAllWordsFromFile(file1);
                     mapFiles.put(file1, words1);
                 }
 
@@ -35,7 +43,7 @@ public class Jaccard {
                     if (mapFiles.containsKey(file2))
                         words2 = mapFiles.get(file2);
                     else {
-                        words2 = getAllWordsFromFile(file2);
+                        words2 = CleanData.getAllWordsFromFile(file2);
                         mapFiles.put(file2, words2);
                     }
 
@@ -115,5 +123,5 @@ public class Jaccard {
     public static void main(String[] args) {
         createJaccardGraph();
         return;
-    }*/
+    }
 }

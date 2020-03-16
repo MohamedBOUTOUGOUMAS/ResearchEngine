@@ -1,5 +1,6 @@
 package multiThreading;
 
+import db.Database;
 import org.unix4j.Unix4j;
 import org.unix4j.line.Line;
 import service.AEF.RegEx;
@@ -34,6 +35,7 @@ public class MatchingBook implements Callable<ResearchResult> {
 
     @Override
     public ResearchResult call() {
+
         if (Helper.isRegEx(word) && retenue == null) {
             File file = new File(Helper.BOOKS_PATH+"/"+fileName);
             List<Line> lines = Unix4j.grep(word, file).toLineList();
