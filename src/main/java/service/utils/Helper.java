@@ -20,7 +20,8 @@ public class Helper {
     public static String PAGE_RANK_MAP = "page-rank-map";
     public static String FLOYD_WARSHALL = "floyd-warshall";
     public static String COLLECTION = "Collection_";
-
+    public static String BETWEENNES_MAP = "betweennes-map";
+    public static String SUGGESTIONS_MAP = "suggestions-map";
 
 
     public static ArrayList<String> readBooks(String path) {

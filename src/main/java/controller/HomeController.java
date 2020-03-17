@@ -26,6 +26,12 @@ public class HomeController {
             (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
     public static Map<String, Integer> fw_indexes =
             (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");*/
+    /*
+    public static Map<String, Float> betweennes =
+            (Map<String, Float>) Serialization.deserialize(Helper.BETWEENNES_MAP, "map");
+     */
+    public static Map<String, List<String>> suggestions =
+            (Map<String, List<String>>) Serialization.deserialize(Helper.SUGGESTIONS_MAP, "map");
 
     @RequestMapping("/")
     public String index() {
@@ -124,5 +130,14 @@ public class HomeController {
         //if (HomeController.pattern != null && HomeController.pattern.equals(pattern)) return results;
         HomeController.pattern = pattern;
         return null;
+    }
+
+    @GetMapping("/suggestions")
+    public List<ResearchResult> getSuggestions(@RequestParam String filename) {
+        ArrayList<String> suggestedFiles = (ArrayList<String>) suggestions.get("15713.txt.utf-8");
+        ArrayList<ResearchResult> result = (ArrayList<ResearchResult>) suggestedFiles.stream()
+                .map(s -> new ResearchResult(Book.getBook(s), 0))
+                .collect(Collectors.toList());
+        return result;
     }
 }

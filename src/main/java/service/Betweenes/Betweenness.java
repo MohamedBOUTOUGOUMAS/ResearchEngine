@@ -1,5 +1,17 @@
 package service.Betweenes;
 
+import service.utils.Book;
+import service.utils.Helper;
+import service.utils.ResearchResult;
+import service.utils.Serialization;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class Betweenness {
 	
 	/*public static Integer nbPoints = Integer.MIN_VALUE;
@@ -78,8 +90,8 @@ public class Betweenness {
 
 		for (Integer i : searchResult.keySet()) {
 			file = searchResult.get(i).book.fileName;
-			edges.addAll(jaccard_dists.get(file).entrySet().parallelStream()
-					.filter(mapResultId::containsKey)
+			edges.addAll(jaccard_dists.get(file).entrySet().stream()
+					.filter(entry -> mapResultId.containsKey(entry.getKey()))
 					.map(entry -> new Edge(i, mapResultId.get(entry.getKey()), entry.getValue()))
 					.filter(edge -> edge.dist() > 0.7)
 					.collect(Collectors.toList()));
@@ -164,4 +176,99 @@ public class Betweenness {
 		return;
 	}*/
 
+    public static float computeBeetweenes(Integer v, ArrayList<Edge> edges, FloydWarshall fw, Integer nbPoints) {
+        //int [][] paths = fw.calculShortestPaths(edges, nbPoints);
+        float res = 0;
+        int cpt;
+        for(int i=0; i<nbPoints; i++) {
+            if(i==v) continue;
+            for(int j=i+1; j<nbPoints; j++) {
+                if(j==v) continue;
+                cpt = 0;
+                ArrayList<ArrayList<Integer>> shortestPaths = fw.pathFinderMap(i,j);
+                for (ArrayList<Integer> path : shortestPaths) {
+                    if(path.contains(v)) cpt++;
+                }
+                if(shortestPaths.size() > 0) {
+                    res+=((float) cpt/shortestPaths.size());
+                }
+            }
+        }
+        return res;
+    }
+
+    private static ArrayList<Edge> createGraph(Map<Integer, String> books
+            , Map<String, Map<String, Double>> jaccard_dists) {
+        ArrayList<Edge> edges = new ArrayList<>();
+        String file;
+        Map<String, Integer> mapResultId = books.keySet().stream()
+                .collect(Collectors.toMap(books::get, Integer::intValue));
+
+        for (Integer i : books.keySet()) {
+            file = books.get(i);
+            edges.addAll(jaccard_dists.get(file).entrySet().stream()
+                    .filter(e -> mapResultId.containsKey(e.getKey()))
+                    .map(entry -> new Edge(i, mapResultId.get(entry.getKey()), entry.getValue()))
+                    .filter(edge -> edge.dist() > 0.9)
+                    .collect(Collectors.toList()));
+        }
+        return edges;
+    }
+
+    public static Map<String, Float> betweennesMap(Map<String, Map<String, Double>> jaccard_dists,
+                                                   Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map,
+                                                   Map<String, Integer> fw_indexes, ArrayList<String> books) {
+        ArrayList<Edge> edges;
+
+        // create all edges in the graph
+        HashMap<Integer, String> hashedFiles = new HashMap<>();
+        for(int i = 0; i < books.size(); i++) {
+            hashedFiles.put(i, books.get(i));
+        }
+        edges = createGraph(hashedFiles, jaccard_dists);
+
+        // compute shortestPaths
+        FloydWarshall fw = new FloydWarshall();
+        //fw.calculShortestPaths(edges, searchResult.size());
+        fw.setMap(floydWarshall_map);
+
+        // sort files by their betweenes
+        ArrayList<String> tmp = new ArrayList<>(hashedFiles.values());
+        Map<String, Float> res = tmp.stream().map(i -> new AbstractMap.SimpleEntry<>(i,
+                computeBeetweenes(fw_indexes.get(i), edges, fw, books.size())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        return res;
+    }
+
+    public static Map<String, ArrayList<String>> suggestionMap(Map<String, Map<String, Double>> jaccard_dists,
+                                                                  Map<String, Float> betweennes) {
+        Map<String, ArrayList<String>> results = new HashMap<>();
+        ArrayList<String> suggestions;
+
+        for (String filename : jaccard_dists.keySet()) {
+            suggestions = (ArrayList<String>) jaccard_dists.get(filename).keySet().parallelStream()
+                    .sorted(Comparator.comparing(betweennes::get).reversed()).limit(3)
+                    .collect(Collectors.toList());
+			results.put(filename, suggestions);
+        }
+
+        return results;
+    }
+
+    public static void main(String[] args) {
+        Map<String, Map<String, Double>> jaccard_dists =
+                (Map<String, Map<String, Double>>) Serialization.deserialize(Helper.JACCARD_MAP, "map");
+        Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
+                (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
+        Map<String, Integer> fw_indexes =
+                (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");
+        ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+        Map<String, Float> betweennes = betweennesMap(jaccard_dists, floydWarshall_map, fw_indexes, books);
+        Serialization.serialize("betweennes-map", "map", betweennes);
+        //Map<String, Float> betweennes = (Map<String, Float>) Serialization.deserialize("betweennes-map", "map");
+        Map<String, ArrayList<String>> suggestions = suggestionMap(jaccard_dists, betweennes);
+		Serialization.serialize("suggestions-map", "map", suggestions);
+        return;
+    }
 }
