@@ -1,5 +1,6 @@
 package multiThreading;
 
+import controller.HomeController;
 import db.Database;
 import service.AEF.RegEx;
 import service.KMP.KMP;
@@ -39,11 +40,9 @@ public class ThreadPool {
                 .map(futureMatched -> {
                     try {
                         ResearchResult researchResult = futureMatched.get();
-                        //bookResearch.put(researchResult.book.fileName, researchResult);
                         if (researchResult.nbMatched == 0) return null;
-                        //System.out.println(researchResult.book.fileName);
-                        //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
-                        //researchResult.pageRank = rank != null ? rank : 0F;
+                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                     }
@@ -57,7 +56,7 @@ public class ThreadPool {
     }
 
 
-    public static List<ResearchResult> getResultsResearchFast(String pattern) {
+    public static List<ResearchResult> getResultsResearchFast(String pattern, String searchSource) {
 
         if (Helper.isRegEx(pattern)) {
             regEx = new RegEx(pattern);
@@ -72,13 +71,18 @@ public class ThreadPool {
 
         List<ResearchResult> results = new ArrayList<>();
 
-        for(String book : Database.matchDB(asciiCode, pattern)){
-            results.add(new ResearchResult(Book.getEmptyBook(book), (int) (Math.random() * 100)));
+        if (searchSource != null && searchSource.equals("db")){
+            for(String book : Database.matchDB(asciiCode, pattern)){
+                ResearchResult rr = new ResearchResult(Book.getEmptyBook(book), (int) (Math.random() * 100));
+                Float rank = HomeController.pageRang.get(book);
+                rr.pageRank = rank != null ? rank : 0F;
+                results.add(rr);
+            }
+            return results;
         }
 
-        return results;
 
-        /*futuresMatched.addAll(books.stream()
+        futuresMatched.addAll(books.stream()
                 .map(fileName -> {
                     MatchingBook matchingBook = new MatchingBook(pattern, fileName, asciiCode, regEx, retenue);
                     return pool.submit(matchingBook);
@@ -92,8 +96,8 @@ public class ThreadPool {
                     try {
                         ResearchResult researchResult = futureMatched.get();
                         if (researchResult.nbMatched == 0) return null;
-                        //Float rank = HomeController.pageRang.get(researchResult.book.fileName);
-                        //researchResult.pageRank = rank != null ? rank : 0F;
+                        Float rank = HomeController.pageRang.get(researchResult.book.fileName);
+                        researchResult.pageRank = rank != null ? rank : 0F;
                         return researchResult;
                     } catch (InterruptedException | ExecutionException e) {
                     }
@@ -103,6 +107,6 @@ public class ThreadPool {
                 .collect(Collectors.toList());
 
         if (regEx != null) regEx = null;
-        return results;*/
+        return results;
     }
 }
