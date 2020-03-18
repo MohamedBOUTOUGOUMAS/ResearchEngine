@@ -286,6 +286,7 @@ public class Betweenness {
         Map<Integer, String> results = IntStream.range(0, files.size())
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(i, files.get(i)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         ArrayList<Edge> edges = createGraph(results, jaccard_dist);
 
         /* Floyd-warshall serialization */
@@ -303,25 +304,30 @@ public class Betweenness {
         ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
 
         /* Jaccard */
-        Map<String, Map<String, Double>> jaccard_dists =
-                (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
-
+        Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();
+        System.out.println("End Jaccard");
         /* Floyd Warshall */
         Map.Entry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
                 generateFloydWarshallAndIndexes(jaccard_dists, files);
+        System.out.println("End Entry FW");
 
         Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map = res.getKey();
-        Serialization.serialize("floyd-warshall", "map", floydWarshall_map);
+        //Serialization.serialize("floyd-warshall", "map", floydWarshall_map);
+        System.out.println("End keyFW");
+
         Map<String, Integer> fw_indexes = res.getValue();
-        Serialization.serialize("floyd-warshall","indexes", fw_indexes);
+        //Serialization.serialize("floyd-warshall","indexes", fw_indexes);
+        System.out.println("End indexFW");
 
         /* Betweennes */
         Map<String, Float> betweennes = betweennesMap(jaccard_dists, floydWarshall_map, fw_indexes, files);
         Serialization.serialize("betweennes-map", "map", betweennes);
+        System.out.println("End betw");
 
         /* Suggestions */
         Map<String, ArrayList<String>> suggestions = suggestionMap(jaccard_dists, betweennes);
 		Serialization.serialize("suggestions-map", "map", suggestions);
+        System.out.println("End sugg");
 
         return;
     }
