@@ -26,10 +26,10 @@ public class HomeController {
             (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
     public static Map<String, Integer> fw_indexes =
             (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");*/
-    /*
+
     public static Map<String, Float> betweennes =
             (Map<String, Float>) Serialization.deserialize(Helper.BETWEENNES_MAP, "map");
-     */
+
     public static Map<String, List<String>> suggestions =
             (Map<String, List<String>>) Serialization.deserialize(Helper.SUGGESTIONS_MAP, "map");
 
@@ -58,24 +58,23 @@ public class HomeController {
                 else if (o2.pageRank < o1.pageRank) return -1;
                 return 0;
             });
-        }else if(classification.equals("btw")){
-            /*results.sort((o1, o2) -> {
+        }
+        else if(classification.equals("btw")){
+            results.sort((o1, o2) -> {
                 if (o2.betweeness > o1.betweeness) return 1;
                 else if (o2.betweeness < o1.betweeness) return -1;
                 return 0;
-            });*/
-        }else if(classification.equals("nbOccurs")){
-            Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
-        }else if(classification.equals("nbClick")){
+            });
+        }
+        else if(classification.equals("nbClick")){
             List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
             Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);
             results.sort((o1, o2) -> nbClick.get(o2.book.fileName) - nbClick.get(o1.book.fileName));
         }
+        else if(classification.equals("nbOccurs")){
+            Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+        }
 
-
-
-        // Betweennes
-        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map, fw_indexes);
         return results;
     }
 
@@ -98,17 +97,6 @@ public class HomeController {
 
         Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
 
-        /*results.sort((o1, o2) -> {
-            if (o2.pageRank > o1.pageRank) return 1;
-            else if (o2.pageRank < o1.pageRank) return -1;
-            return 0;
-        });*/
-
-        //results = Betweenness.sortByBetweenes(results, jaccard_dists, floydWarshall_map, fw_indexes);
-
-        /*List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
-        Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);
-        results.sort((o1, o2) -> nbClick.get(o2.book.fileName) - nbClick.get(o1.book.fileName));*/
         return results;
     }
 
@@ -136,7 +124,7 @@ public class HomeController {
     public List<ResearchResult> getSuggestions(@RequestParam String filename) {
         ArrayList<String> suggestedFiles = (ArrayList<String>) suggestions.get("15713.txt.utf-8");
         ArrayList<ResearchResult> result = (ArrayList<ResearchResult>) suggestedFiles.stream()
-                .map(s -> new ResearchResult(Book.getBook(s), 0))
+                .map(s -> new ResearchResult(Book.getEmptyBook(s), 0))
                 .collect(Collectors.toList());
         return result;
     }
