@@ -11,11 +11,11 @@ import service.utils.Serialization;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
-    static Set<String> autoComplete = new HashSet<>();
+    static Set<String> autoComplete;
     static List<ResearchResult> results = null;
     static String pattern = null;
     public static Map<String, Float> pageRang =

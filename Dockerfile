@@ -6,6 +6,8 @@ RUN mkdir /app
 
 RUN mkdir /indexesTable
 
+RUN mkdir /page-rank-map
+
 RUN mkdir /books-master
 
 COPY run.sh /app/
@@ -17,5 +19,7 @@ COPY target/*.jar /app/
 COPY indexesTable /indexesTable/
 
 COPY books-master /books-master/
+
+COPY page-rank-map /page-rank-map/
 
 ENTRYPOINT [ "sh", "/app/run.sh" ]
