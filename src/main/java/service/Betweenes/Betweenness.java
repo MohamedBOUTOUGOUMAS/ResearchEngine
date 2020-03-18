@@ -1,8 +1,7 @@
 package service.Betweenes;
 
-import service.utils.Book;
+import javafx.util.Pair;
 import service.utils.Helper;
-import service.utils.ResearchResult;
 import service.utils.Serialization;
 
 import java.io.BufferedReader;
@@ -283,23 +282,48 @@ public class Betweenness {
         return results;
     }
 
+    public static Pair<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>>
+    generateFloydWarshallAndIndexes(Map<String, Map<String, Double>> jaccard_dist, ArrayList<String> files) {
+        Map<Integer, String> results = IntStream.range(0, files.size())
+                .mapToObj(i -> new AbstractMap.SimpleEntry<>(i, files.get(i)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        ArrayList<Edge> edges = createGraph(results, jaccard_dist);
+
+        /* Floyd-warshall serialization */
+        FloydWarshall fw = new FloydWarshall();
+        fw.calculShortestPaths(edges, files.size());
+
+        /* Indexes serialization */
+        Map<String, Integer> indexes = results.entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getValue(), Map.Entry::getKey));
+
+        return new Pair<>(fw.getMap(), indexes);
+    }
+
     public static void main(String[] args) {
-        /*
+        ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+
+        /* Jaccard */
         Map<String, Map<String, Double>> jaccard_dists =
-                (Map<String, Map<String, Double>>) Serialization.deserialize(Helper.JACCARD_MAP, "map");
-         */
-        Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
-                (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
-        Map<String, Integer> fw_indexes =
-                (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");
-        Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();
-        Serialization.serialize("jaccard-map", "map", jaccard_dists);
-        ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
-        Map<String, Float> betweennes = betweennesMap(jaccard_dists, floydWarshall_map, fw_indexes, books);
+                (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
+
+        /* Floyd Warshall */
+        Pair<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
+                generateFloydWarshallAndIndexes(jaccard_dists, files);
+
+        Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map = res.getKey();
+        Serialization.serialize("floyd-warshall", "map", floydWarshall_map);
+        Map<String, Integer> fw_indexes = res.getValue();
+        Serialization.serialize("floyd-warshall","indexes", fw_indexes);
+
+        /* Betweennes */
+        Map<String, Float> betweennes = betweennesMap(jaccard_dists, floydWarshall_map, fw_indexes, files);
         Serialization.serialize("betweennes-map", "map", betweennes);
-        //Map<String, Float> betweennes = (Map<String, Float>) Serialization.deserialize("betweennes-map", "map");
+
+        /* Suggestions */
         Map<String, ArrayList<String>> suggestions = suggestionMap(jaccard_dists, betweennes);
 		Serialization.serialize("suggestions-map", "map", suggestions);
+
         return;
     }
 }
