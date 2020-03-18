@@ -241,6 +241,33 @@ public class Betweenness {
         return res;
     }
 
+    public static Map<String, Map<String, Double>> getJaccardMap() {
+        Map<String, Map<String, Double>> result = new HashMap<>();
+        Map<String, Double> file_dists;
+        ArrayList<String> files = Helper.readBooks(Helper.JACCARD_PATH);
+        FileReader fr;
+        BufferedReader br;
+        try {
+            for (String file : files) {
+                fr = new FileReader(Helper.JACCARD_PATH+"/"+file);
+                br = new BufferedReader(fr);
+
+                file_dists = br.lines()
+                        .map(line -> line.split(" ", 2))
+                        .map(array -> new AbstractMap.SimpleEntry<>(array[0], Double.parseDouble(array[1])))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+                result.put(file, file_dists);
+
+                br.close();
+                fr.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public static Map<String, ArrayList<String>> suggestionMap(Map<String, Map<String, Double>> jaccard_dists,
                                                                   Map<String, Float> betweennes) {
         Map<String, ArrayList<String>> results = new HashMap<>();
@@ -257,12 +284,16 @@ public class Betweenness {
     }
 
     public static void main(String[] args) {
+        /*
         Map<String, Map<String, Double>> jaccard_dists =
                 (Map<String, Map<String, Double>>) Serialization.deserialize(Helper.JACCARD_MAP, "map");
+         */
         Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
                 (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
         Map<String, Integer> fw_indexes =
                 (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");
+        Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();
+        Serialization.serialize("jaccard-map", "map", jaccard_dists);
         ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
         Map<String, Float> betweennes = betweennesMap(jaccard_dists, floydWarshall_map, fw_indexes, books);
         Serialization.serialize("betweennes-map", "map", betweennes);
