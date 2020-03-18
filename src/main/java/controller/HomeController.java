@@ -122,7 +122,7 @@ public class HomeController {
 
     @GetMapping("/suggestions")
     public List<ResearchResult> getSuggestions(@RequestParam String filename) {
-        ArrayList<String> suggestedFiles = (ArrayList<String>) suggestions.get("15713.txt.utf-8");
+        ArrayList<String> suggestedFiles = (ArrayList<String>) suggestions.get(filename);
         ArrayList<ResearchResult> result = (ArrayList<ResearchResult>) suggestedFiles.stream()
                 .map(s -> new ResearchResult(Book.getEmptyBook(s), 0))
                 .collect(Collectors.toList());

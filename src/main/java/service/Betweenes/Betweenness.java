@@ -1,6 +1,5 @@
 package service.Betweenes;
 
-import javafx.util.Pair;
 import service.utils.Helper;
 import service.utils.Serialization;
 
@@ -282,7 +281,7 @@ public class Betweenness {
         return results;
     }
 
-    public static Pair<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>>
+    public static Map.Entry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>>
     generateFloydWarshallAndIndexes(Map<String, Map<String, Double>> jaccard_dist, ArrayList<String> files) {
         Map<Integer, String> results = IntStream.range(0, files.size())
                 .mapToObj(i -> new AbstractMap.SimpleEntry<>(i, files.get(i)))
@@ -297,7 +296,7 @@ public class Betweenness {
         Map<String, Integer> indexes = results.entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getValue(), Map.Entry::getKey));
 
-        return new Pair<>(fw.getMap(), indexes);
+        return new AbstractMap.SimpleEntry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>>(fw.getMap(), indexes);
     }
 
     public static void main(String[] args) {
@@ -308,7 +307,7 @@ public class Betweenness {
                 (Map<String, Map<String, Double>>) Serialization.deserialize("jaccard-map", "map");
 
         /* Floyd Warshall */
-        Pair<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
+        Map.Entry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
                 generateFloydWarshallAndIndexes(jaccard_dists, files);
 
         Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map = res.getKey();
