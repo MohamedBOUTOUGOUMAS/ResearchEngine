@@ -273,7 +273,8 @@ public class Betweenness {
 
         for (String filename : jaccard_dists.keySet()) {
             suggestions = (ArrayList<String>) jaccard_dists.get(filename).keySet().parallelStream()
-                    .sorted(Comparator.comparing(betweennes::get).reversed()).limit(3)
+                    .sorted(Comparator.comparing(s -> jaccard_dists.get(filename).get(s)).reversed())
+                    .limit(3)
                     .collect(Collectors.toList());
 			results.put(filename, suggestions);
         }
@@ -297,7 +298,7 @@ public class Betweenness {
         Map<String, Integer> indexes = results.entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getValue(), Map.Entry::getKey));
 
-        return new AbstractMap.SimpleEntry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>>(fw.getMap(), indexes);
+        return new AbstractMap.SimpleEntry<>(fw.getMap(), indexes);
     }
 
     public static void main(String[] args) {
