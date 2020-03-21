@@ -306,18 +306,20 @@ public class Betweenness {
 
         /* Jaccard */
         Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();
+        Serialization.serialize("jaccard-map", "map", jaccard_dists);
         System.out.println("End Jaccard");
+
         /* Floyd Warshall */
         Map.Entry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
                 generateFloydWarshallAndIndexes(jaccard_dists, files);
         System.out.println("End Entry FW");
 
         Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map = res.getKey();
-        //Serialization.serialize("floyd-warshall", "map", floydWarshall_map);
+        Serialization.serialize("floyd-warshall", "map", floydWarshall_map);
         System.out.println("End keyFW");
 
         Map<String, Integer> fw_indexes = res.getValue();
-        //Serialization.serialize("floyd-warshall","indexes", fw_indexes);
+        Serialization.serialize("floyd-warshall","indexes", fw_indexes);
         System.out.println("End indexFW");
 
         /* Betweennes */

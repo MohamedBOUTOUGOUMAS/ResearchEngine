@@ -1,9 +1,8 @@
 package service.utils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CleanData {
 
@@ -58,8 +57,27 @@ public class CleanData {
         return words;
     }
 
-    public static void main(String[] args) {
-        booksToIndex();
+    public static boolean hasTitle(String fileName) {
+        BufferedReader lecteurAvecBuffer;
+        try {
+            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
+            String line;
+            while ((line = lecteurAvecBuffer.readLine()) != null) {
+                if (Helper.getTitleFromFile(line) != null) return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static Set<String> rejectedFiles() {
+        File repertoire = new File(Helper.BOOKS_PATH);
+        ArrayList<String> files = (ArrayList<String>) Arrays.stream(repertoire.list()).collect(Collectors.toList());
+        Set<String> rejectedFiles = files.stream()
+                .filter(file -> !hasTitle(file))
+                .collect(Collectors.toSet());
+        return rejectedFiles;
     }
 
 }
