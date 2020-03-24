@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public class Helper {
 
@@ -29,11 +30,13 @@ public class Helper {
         ArrayList<String> books = new ArrayList<>();
         File repertoire = new File(path);
         String[] liste = repertoire.list();
-
+        //Set<String> rejectedFiles = CleanData.rejectedFiles();
         if (liste != null) {
             for (int i = 0; i < (Math.min(liste.length, NB_BOOKS)); i++) {
             //for (int i = 0; i < liste.length; i++) {
-                books.add(liste[i]);
+                //if (!rejectedFiles.contains(liste[i])) {
+                    books.add(liste[i]);
+                //}
             }
         } else {
             System.err.println("Nom de repertoire invalide");
@@ -137,7 +140,7 @@ public class Helper {
         return ligne;
     }
 
-    public static String getFileName(String file){
+    public static String getFileName(String file) {
         String[] tokens = file.split("\\.");
         return tokens[0];
     }

@@ -20,12 +20,6 @@ public class HomeController {
     static String pattern = null;
     public static Map<String, Float> pageRang =
             (Map<String, Float>) Serialization.deserialize(Helper.PAGE_RANK_MAP, "map");
-    /*public static Map<String, Map<String, Double>> jaccard_dists =
-            (Map<String, Map<String, Double>>) Serialization.deserialize(Helper.JACCARD_MAP, "map");
-    public static Map<Integer, Map<Integer, ArrayList<Integer>>> floydWarshall_map =
-            (Map<Integer, Map<Integer, ArrayList<Integer>>>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "map");
-    public static Map<String, Integer> fw_indexes =
-            (Map<String, Integer>) Serialization.deserialize(Helper.FLOYD_WARSHALL, "indexes");*/
 
     public static Map<String, Float> betweennes =
             (Map<String, Float>) Serialization.deserialize(Helper.BETWEENNES_MAP, "map");

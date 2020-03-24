@@ -93,6 +93,7 @@ public class Indexing {
 
         //System.out.println(Helper.getFileName(txt));
         makeDB();
+        //makeMap();
     }
 
 }

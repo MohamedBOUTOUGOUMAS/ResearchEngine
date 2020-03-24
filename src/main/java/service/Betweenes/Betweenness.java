@@ -306,7 +306,9 @@ public class Betweenness {
 
         /* Jaccard */
         Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();
+        //Serialization.serialize("jaccard-map", "map", jaccard_dists);
         System.out.println("End Jaccard");
+
         /* Floyd Warshall */
         Map.Entry<Map<Integer, Map<Integer, ArrayList<Integer>>>, Map<String, Integer>> res =
                 generateFloydWarshallAndIndexes(jaccard_dists, files);
