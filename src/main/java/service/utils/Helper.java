@@ -11,6 +11,7 @@ import java.util.Map;
 public class Helper {
 
     public static String BOOKS_PATH = "books-master";
+    public static String BOOKS_CLEAN_PATH = "books";
     public static String BOOKS_INDEX = "index";
     public static String JACCARD_PATH = "jaccard";
     public static String JACCARD_MAP = "jaccard-map";
@@ -31,6 +32,7 @@ public class Helper {
 
         if (liste != null) {
             for (int i = 0; i < (Math.min(liste.length, NB_BOOKS)); i++) {
+            //for (int i = 0; i < liste.length; i++) {
                 books.add(liste[i]);
             }
         } else {

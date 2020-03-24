@@ -3,12 +3,7 @@ package service.TestsFonctionnels;
 import service.AEF.*;
 import service.AEF.RegExTree;
 import service.KMP.KMP;
-import service.RadixTree.*;
-import service.utils.Position;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -94,27 +89,4 @@ public class Tests {
         assertEquals(3, positions);
     }
 
-
-    @Test
-    public void RadixTreeTests() {
-
-        RadixTree tree = new RadixTree();
-        ArrayList<Position> positions = new ArrayList<>();
-        positions.add(new Position());
-        tree.insertWord("bulle", 0, positions);
-        tree.insertWord("bus", 0, positions);
-        tree.insertWord("zoo", 0, positions);
-        Assert.assertTrue(tree.isPresent("bulle") != null && tree.isPresent("bulle").size() == 1);
-        Assert.assertTrue(tree.isPresent("bus") != null && tree.isPresent("bus").size() == 1);
-        Assert.assertTrue(tree.isPresent("zoo") != null && tree.isPresent("zoo").size() == 1);
-    }
-
-	/*@Test
-	public void whenGrepWithSimpleString_thenCorrect() {
-		int expectedLineCount = 1;
-		File file = new File("bref.txt");
-		List<Line> lines = Unix4j.grep("c(o|p)+y", file).toLineList();
-		System.out.println(lines);
-		assertEquals(expectedLineCount, lines.size());
-	}*/
 }

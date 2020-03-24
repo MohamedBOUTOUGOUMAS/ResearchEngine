@@ -1,8 +1,11 @@
 package service.utils;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CleanData {
@@ -58,8 +61,29 @@ public class CleanData {
         return words;
     }
 
+    public static void createBooks(){
+        List<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+        int i = 1;
+        for (String book: books){
+            System.out.println("i "+i);
+            if(i > Helper.NB_BOOKS) break;
+            Book b = Book.getEmptyBook(book);
+            if (b.fileName != null && b.author != null && b.title != null && b.releaseDate != null){
+                try{
+                    InputStream input = new FileInputStream(Helper.BOOKS_PATH+"/"+book);
+                    OutputStream output = new FileOutputStream(Helper.BOOKS_CLEAN_PATH+"/"+book);
+                    IOUtils.copy(input, output);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            i++;
+        }
+    }
+
     public static void main(String[] args) {
-        booksToIndex();
+        //booksToIndex();
+        createBooks();
     }
 
 }
