@@ -71,18 +71,9 @@ public class ThreadPool {
 
         int asciiCode = (pattern.toUpperCase().charAt(0) - 65);
 
-        List<ResearchResult> results = new ArrayList<>();
 
         if (searchSource != null && searchSource.equals("db")){
-            for(String book : Database.matchDB(asciiCode, pattern)){
-                ResearchResult rr = new ResearchResult(Book.getEmptyBook(book), (int) (Math.random() * 100));
-                Float rank = HomeController.pageRang.get(book);
-                rr.pageRank = rank != null ? rank : 0F;
-                Float btw = HomeController.betweennes.get(book);
-                rr.betweeness = btw != null ? btw : 0F;
-                results.add(rr);
-            }
-            return results;
+            return Database.matchDB(asciiCode, pattern);
         }
 
 
@@ -94,7 +85,7 @@ public class ThreadPool {
                 .collect(Collectors.toList())
         );
 
-        results = futuresMatched
+        List<ResearchResult> results = futuresMatched
                 .stream()
                 .map(futureMatched -> {
                     try {

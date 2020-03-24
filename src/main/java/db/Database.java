@@ -6,16 +6,18 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import controller.HomeController;
 import org.bson.Document;
+import service.utils.Book;
 import service.utils.Helper;
+import service.utils.ResearchResult;
 
 import javax.swing.text.html.parser.Entity;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.mongodb.client.model.Projections.exclude;
+import static com.mongodb.client.model.Projections.include;
 
 public class Database {
 
@@ -48,16 +50,34 @@ public class Database {
         collection.insertOne(newDocument);
     }
 
-    public static List<String> matchDB(int firstLetter, String pattern){
+    public static List<ResearchResult> matchDB(int firstLetter, String pattern){
         MongoDatabase dbBook = Database.getDB(Helper.getFileName(DBStatic.mongo_index));
         MongoCollection<Document> collection = dbBook.getCollection(Helper.COLLECTION+firstLetter);
-        FindIterable<Document> res = collection.find(Filters.eq("words.word", pattern)).projection(exclude("_id", "words"));
-        List<String> l = new ArrayList<>();
+        FindIterable<Document> res = collection.find(Filters.eq("words.word", pattern))
+                .projection(new BasicDBObject("words.word.$", 1).append("fileName", 1).append("_id", 0));
+        List<ResearchResult> l = new ArrayList<>();
         for(Document doc : res){
+            ResearchResult rr = new ResearchResult(null, 0);
+            l.add(rr);
             for (Map.Entry<String, Object> e : doc.entrySet()){
-                l.add((String) e.getValue());
+                if(e.getKey().equals("fileName")){
+                    rr.book = Book.getEmptyBook((String) e.getValue());
+                    Float rank = HomeController.pageRang.get(rr.book.fileName);
+                    rr.pageRank = rank != null ? rank : 0F;
+                    Float btw = HomeController.betweennes.get(rr.book.fileName);
+                    rr.betweeness = btw != null ? btw : 0F;
+                }
+                if(e.getKey().equals("words")){
+                    Document word = ((List<Document>)e.getValue()).get(0);
+                    for (Map.Entry<String, Object> e1 : word.entrySet()){
+                        if(e1.getKey().equals("nbOccurs")){
+                            rr.nbMatched = (Integer) e1.getValue();
+                        }
+                    }
+                }
             }
         }
+        System.out.println(l.size());
         return l;
     }
 
