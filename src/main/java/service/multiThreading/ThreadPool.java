@@ -59,20 +59,20 @@ public class ThreadPool {
 
     public static List<ResearchResult> getResultsResearchFast(String pattern, String searchSource) {
 
-        if (GenericHelper.isRegEx(pattern)) {
-            regEx = new RegEx(pattern);
-        } else {
-            retenue = KMP.calculRetenue(pattern.toCharArray());
-        }
 
         ArrayList<String> books = GenericHelper.readBooks(GenericHelper.INDEXES_TABLES_PATH);
         futuresMatched = new ArrayList<>();
 
         int asciiCode = (pattern.toUpperCase().charAt(0) - 65);
 
-
-        if (searchSource != null && searchSource.equals("db")){
+        if (searchSource != null && searchSource.equals("db")) {
             return Database.matchDB(asciiCode, pattern);
+        }
+
+        if (GenericHelper.isRegEx(pattern)) {
+            regEx = new RegEx(pattern);
+        } else {
+            retenue = KMP.calculRetenue(pattern.toCharArray());
         }
 
 
@@ -104,5 +104,15 @@ public class ThreadPool {
 
         if (regEx != null) regEx = null;
         return results;
+    }
+
+    public static List<ResearchResult> getResultsResearchPlus(String pattern, String metadata) {
+        if (metadata.equals("title")){
+            return Database.matchDBWithMeta(pattern, metadata);
+        }
+        if (metadata.equals("author")){
+            return Database.matchDBWithMeta(pattern, metadata);
+        }
+        return new ArrayList<>();
     }
 }

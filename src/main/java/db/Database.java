@@ -6,6 +6,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import controller.HomeController;
 import org.bson.Document;
 import topics.Book;
@@ -47,7 +48,6 @@ public class Database {
 
     public static List<ResearchResult> matchDB(int firstLetter, String pattern){
         MongoDatabase dbBook = Database.getDB(GenericHelper.getFileName(DBStatic.mongo_index));
-        MongoCollection<Document> collection = dbBook.getCollection(GenericHelper.COLLECTION+firstLetter);
 
         /*Bson lookup = new Document("$lookup",
                 new Document("from", GenericHelper.METABOOKS)
@@ -62,8 +62,17 @@ public class Database {
 
         AggregateIterable<Document> res = collection.aggregate(filters);*/
 
-        FindIterable<Document> res = collection.find(Filters.eq("words.word", pattern))
-                .projection(new BasicDBObject("words.word.$", 1).append("fileName", 1).append("_id", 0));
+        FindIterable<Document> res;
+        if(GenericHelper.isRegEx(pattern) && firstLetter < 26){
+            MongoCollection<Document> collection = dbBook.getCollection(GenericHelper.COLLECTION+firstLetter);
+            res = collection.find(Filters.regex("words.word", pattern))
+                    .projection(new BasicDBObject("words.word.$", 1).append("fileName", 1).append("_id", 0));
+        }else{
+            MongoCollection<Document> collection = dbBook.getCollection(GenericHelper.COLLECTION+firstLetter);
+            res = collection.find(Filters.eq("words.word", pattern))
+                    .projection(new BasicDBObject("words.word.$", 1).append("fileName", 1).append("_id", 0));
+        }
+
         List<ResearchResult> l = new ArrayList<>();
 
         for(Document doc : res){
@@ -106,6 +115,41 @@ public class Database {
             }
         }
         return l;
+    }
+
+    public static List<ResearchResult> matchDBWithMeta(String pattern, String metadata) {
+        MongoDatabase dbBook = Database.getDB(GenericHelper.getFileName(DBStatic.mongo_index));
+        MongoCollection<Document> collection = dbBook.getCollection(GenericHelper.METABOOKS);
+        FindIterable<Document> res;
+        res = collection.find(Filters.eq(metadata, pattern))
+                .projection(Projections.exclude("_id"));
+
+        List<ResearchResult> l = new ArrayList<>();
+
+        for(Document doc : res){
+            ResearchResult rr = new ResearchResult(null, 0);
+            l.add(rr);
+            for (Map.Entry<String, Object> e : doc.entrySet()){
+                if(e.getKey().equals("fileName")){
+                    rr.book = new Book((String) e.getValue());
+                    Float rank = HomeController.pageRang.get(e.getValue());
+                    rr.pageRank = rank != null ? rank : 0F;
+                    Float btw = HomeController.betweennes.get(e.getValue());
+                    rr.betweeness = btw != null ? btw : 0F;
+                }
+                if(e.getKey().equals("title")){
+                    rr.book.title = (String) e.getValue();
+                }
+                if(e.getKey().equals("author")){
+                    rr.book.author = (String) e.getValue();
+                }
+                if(e.getKey().equals("releaseDate")){
+                    rr.book.releaseDate = (String) e.getValue();
+                }
+            }
+        }
+        return l;
+
     }
 
     // { words.word: { $all: ["Sargon"] } }

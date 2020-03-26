@@ -1,13 +1,17 @@
 package helpers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import db.Metadata;
 import topics.Book;
+import topics.ResearchResult;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GenericHelper {
 
@@ -107,44 +111,40 @@ public class GenericHelper {
         return word.contains("(") || word.contains("+") || word.contains("*") || word.contains(".");
     }
 
-    public static String getPatternFromJson(String body) {
-        JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
-        String pattern = null;
-        for (Map.Entry<String, JsonElement> e : payload.entrySet()) {
-            if (e.getKey().equals("regEx")) {
-                pattern = e.getValue().getAsString();
-            }
-        }
-        return pattern;
-    }
-
-    public static boolean getFastFromJson(String body) {
-        JsonObject payload = new JsonParser().parse(body).getAsJsonObject();
-        boolean fast = false;
-        for (Map.Entry<String, JsonElement> e : payload.entrySet()) {
-            if (e.getKey().equals("fast")) {
-                fast = e.getValue().getAsBoolean();
-            }
-        }
-        return fast;
-    }
-
-    public static String cleanText(String ligne) {
-        // strips off all non-ASCII characters
-        ligne = ligne.replaceAll("[^\\x00-\\x7F]", "");
-
-        // erases all the ASCII control characters
-        ligne = ligne.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-
-        // removes non-printable characters from Unicode
-        ligne = ligne.replaceAll("\\p{C}", "");
-        ligne = ligne.trim();
-        return ligne;
+    public static JsonObject getJsonFromBody(String body){
+        return new JsonParser().parse(body).getAsJsonObject();
     }
 
     public static String getFileName(String file) {
         String[] tokens = file.split("\\.");
         return tokens[0];
+    }
+
+    public static List<ResearchResult> sortBy(List<ResearchResult> results, String classification){
+        if (classification != null && classification.equals("pgr")){
+            results.sort((o1, o2) -> {
+                if (o2.pageRank > o1.pageRank) return 1;
+                else if (o2.pageRank < o1.pageRank) return -1;
+                return 0;
+            });
+        }
+        else if(classification.equals("btw")){
+            results.sort((o1, o2) -> {
+                if (o2.betweeness > o1.betweeness) return 1;
+                else if (o2.betweeness < o1.betweeness) return -1;
+                return 0;
+            });
+        }
+        else if(classification.equals("nbClick")){
+            List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
+            Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);
+            results.sort((o1, o2) -> nbClick.get(o2.book.fileName) - nbClick.get(o1.book.fileName));
+        }
+        else if(classification.equals("nbOccurs")){
+            Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+        }
+
+        return results;
     }
 
 }

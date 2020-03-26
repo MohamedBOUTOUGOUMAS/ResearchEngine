@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.JsonObject;
 import db.Metadata;
 import service.multiThreading.ThreadPool;
 import topics.Book;
@@ -11,13 +12,11 @@ import topics.Serialization;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
+//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
     static Set<String> autoComplete;
-    static List<ResearchResult> results = null;
-    static String pattern = null;
     public static Map<String, Float> pageRang =
             (Map<String, Float>) Serialization.deserialize(GenericHelper.PAGE_RANK_MAP, "map");
 
@@ -34,10 +33,8 @@ public class HomeController {
 
     @GetMapping("/search")
     public List<ResearchResult> getResearch(@RequestParam String pattern, @RequestParam String fast,  @RequestParam String searchSource,  @RequestParam String classification) {
-        System.out.println("fast "+fast+" source "+searchSource+" classification "+classification);
+        List<ResearchResult> results;
         boolean speedMode = Boolean.parseBoolean(fast);
-        List<ResearchResult> fromCache = getFromCache(pattern);
-        if (fromCache != null) return fromCache;
 
         if (autoComplete != null && !autoComplete.contains(pattern)) {
             Metadata.addAutoCompleteSearch(pattern);
@@ -46,52 +43,42 @@ public class HomeController {
         if (speedMode) results = ThreadPool.getResultsResearchFast(pattern, searchSource);
         else results = ThreadPool.getResultsResearch(pattern);
 
-        if (classification != null && classification.equals("pgr")){
-            results.sort((o1, o2) -> {
-                if (o2.pageRank > o1.pageRank) return 1;
-                else if (o2.pageRank < o1.pageRank) return -1;
-                return 0;
-            });
-        }
-        else if(classification.equals("btw")){
-            results.sort((o1, o2) -> {
-                if (o2.betweeness > o1.betweeness) return 1;
-                else if (o2.betweeness < o1.betweeness) return -1;
-                return 0;
-            });
-        }
-        else if(classification.equals("nbClick")){
-            List<String> fileNames = results.stream().map(rr -> rr.book.fileName).collect(Collectors.toList());
-            Map<String, Integer> nbClick = Metadata.getNbClickBooks(fileNames);
-            results.sort((o1, o2) -> nbClick.get(o2.book.fileName) - nbClick.get(o1.book.fileName));
-        }
-        else if(classification.equals("nbOccurs")){
-            Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
-        }
-
-        return results;
+        return GenericHelper.sortBy(results, classification);
     }
 
     @PostMapping("/advencedSearch")
     public List<ResearchResult> getAdvencedSearch(@RequestBody String body) {
+        List<ResearchResult> results;
 
-        String pattern = GenericHelper.getPatternFromJson(body);
-        boolean speedMode = GenericHelper.getFastFromJson(body);
+        JsonObject payload = GenericHelper.getJsonFromBody(body);
 
-        List<ResearchResult> fromCache = getFromCache(pattern);
-        if (fromCache != null) return fromCache;
+        String pattern = payload.get("regEx").getAsString();
+        boolean speedMode = payload.get("fast").getAsBoolean();
+        String searchSource = payload.get("searchSource").getAsString();
+        String classification = payload.get("classification").getAsString();
 
         if (autoComplete != null && !autoComplete.contains(pattern)){
             Metadata.addAutoCompleteSearch(pattern);
             autoComplete.add(pattern);
         }
 
-        if (speedMode) results = ThreadPool.getResultsResearchFast(pattern, null);
+        if (speedMode) results = ThreadPool.getResultsResearchFast(pattern, searchSource);
         else results = ThreadPool.getResultsResearch(pattern);
 
-        Collections.sort(results, (o1, o2) -> o2.nbMatched - o1.nbMatched);
+        return GenericHelper.sortBy(results, classification);
+    }
 
-        return results;
+    @PostMapping("/advencedSearchPlus")
+    public List<ResearchResult> getAdvencedPlusResearch(@RequestBody String body){
+        List<ResearchResult> results;
+        JsonObject payload = GenericHelper.getJsonFromBody(body);
+        String pattern = payload.get("pattern").getAsString();
+        String metadata = payload.get("metadata").getAsString();
+        String classification = payload.get("classification").getAsString();
+
+        results = ThreadPool.getResultsResearchPlus(pattern, metadata);
+
+        return GenericHelper.sortBy(results, classification);
     }
 
     @GetMapping("/search/book")
@@ -106,12 +93,6 @@ public class HomeController {
         if (autoComplete == null) autoComplete = Metadata.getAutoComplete();
         System.out.println("auto " + autoComplete);
         return autoComplete;
-    }
-
-    public List<ResearchResult> getFromCache(String pattern) {
-        //if (HomeController.pattern != null && HomeController.pattern.equals(pattern)) return results;
-        HomeController.pattern = pattern;
-        return null;
     }
 
     @GetMapping("/suggestions")
