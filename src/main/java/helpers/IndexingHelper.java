@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import db.DBStatic;
 import db.Database;
 import org.bson.Document;
+import topics.Book;
 
 import java.io.*;
 import java.util.*;
@@ -89,7 +90,16 @@ public class IndexingHelper {
 
     public static void addMetadataToDB(){
         ArrayList<String> files = GenericHelper.readBooks(GenericHelper.INDEXES_TABLES_PATH);
-
+        MongoDatabase dbBook = Database.getDB(GenericHelper.getFileName(DBStatic.mongo_index));
+        MongoCollection<Document> collection = Database.getCollectionFromDB(dbBook, GenericHelper.METABOOKS);
+        for (String fileName : files){
+            Book modelBook = Book.getEmptyBook(fileName);
+            Document b = new Document("fileName", fileName)
+                    .append("title", modelBook.title)
+                    .append("author", modelBook.author)
+                    .append("releaseDate", modelBook.releaseDate);
+            collection.insertOne(b);
+        }
     }
 
     public static void main(String[] args) {
@@ -97,8 +107,9 @@ public class IndexingHelper {
         //String txt = "123.txt.utf-8";
 
         //System.out.println(Helper.getFileName(txt));
-        makeDB();
         //makeMap();
+        //makeDB();
+        addMetadataToDB();
     }
 
 }

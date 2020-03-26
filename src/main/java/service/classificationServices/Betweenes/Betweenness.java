@@ -1,4 +1,4 @@
-package classificationServices.Betweenes;
+package service.classificationServices.Betweenes;
 
 import helpers.GenericHelper;
 import topics.Serialization;
