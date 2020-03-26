@@ -1,4 +1,4 @@
-package service.AEF;
+package service.matchingServices.AEF;
 
 public class Automat {
 

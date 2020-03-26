@@ -1,8 +1,8 @@
-package service.TestsFonctionnels;
+package tests;
 
-import service.AEF.*;
-import service.AEF.RegExTree;
-import service.KMP.KMP;
+import service.matchingServices.AEF.*;
+import service.matchingServices.AEF.RegExTree;
+import service.matchingServices.KMP.KMP;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class Tests {
     @Test
     public void AEFDeterministeTest1() {
 
-        RegExTree sargon = service.AEF.Test.exampleSargon();
+        RegExTree sargon = AEFTests.exampleSargon();
         Automat a = sargon.makeAuto();
 
         AefDeterministe aefD = new AefDeterministe(a);

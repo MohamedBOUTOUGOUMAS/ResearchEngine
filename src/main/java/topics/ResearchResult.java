@@ -1,4 +1,4 @@
-package service.utils;
+package topics;
 
 public class ResearchResult {
 

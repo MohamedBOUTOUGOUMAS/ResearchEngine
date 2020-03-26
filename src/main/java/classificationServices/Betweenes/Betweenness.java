@@ -1,7 +1,7 @@
-package service.Betweenes;
+package classificationServices.Betweenes;
 
-import service.utils.Helper;
-import service.utils.Serialization;
+import helpers.GenericHelper;
+import topics.Serialization;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -242,12 +242,12 @@ public class Betweenness {
     public static Map<String, Map<String, Double>> getJaccardMap() {
         Map<String, Map<String, Double>> result = new HashMap<>();
         Map<String, Double> file_dists;
-        ArrayList<String> files = Helper.readBooks(Helper.JACCARD_PATH);
+        ArrayList<String> files = GenericHelper.readBooks(GenericHelper.JACCARD_PATH);
         FileReader fr;
         BufferedReader br;
         try {
             for (String file : files) {
-                fr = new FileReader(Helper.JACCARD_PATH+"/"+file);
+                fr = new FileReader(GenericHelper.JACCARD_PATH+"/"+file);
                 br = new BufferedReader(fr);
 
                 file_dists = br.lines()
@@ -302,7 +302,7 @@ public class Betweenness {
     }
 
     public static void main(String[] args) {
-        ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+        ArrayList<String> files = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
 
         /* Jaccard */
         Map<String, Map<String, Double>> jaccard_dists = getJaccardMap();

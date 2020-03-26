@@ -1,4 +1,4 @@
-package service.Betweenes;
+package classificationServices.Betweenes;
 
 import java.util.ArrayList;
 import java.util.HashMap;

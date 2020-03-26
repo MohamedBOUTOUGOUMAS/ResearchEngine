@@ -1,4 +1,4 @@
-package service.Betweenes;
+package classificationServices.Betweenes;
 
 public class Edge {
     public int p;

@@ -1,12 +1,11 @@
-package multiThreading;
+package service.multiThreading;
 
 import controller.HomeController;
 import db.Database;
-import service.AEF.RegEx;
-import service.KMP.KMP;
-import service.utils.Book;
-import service.utils.Helper;
-import service.utils.ResearchResult;
+import service.matchingServices.AEF.RegEx;
+import service.matchingServices.KMP.KMP;
+import helpers.GenericHelper;
+import topics.ResearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class ThreadPool {
 
     public static List<ResearchResult> getResultsResearch(String pattern) {
 
-        ArrayList<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+        ArrayList<String> books = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
 
         futuresMatched = new ArrayList<>();
         futuresMatched.addAll(books.stream()
@@ -60,13 +59,13 @@ public class ThreadPool {
 
     public static List<ResearchResult> getResultsResearchFast(String pattern, String searchSource) {
 
-        if (Helper.isRegEx(pattern)) {
+        if (GenericHelper.isRegEx(pattern)) {
             regEx = new RegEx(pattern);
         } else {
             retenue = KMP.calculRetenue(pattern.toCharArray());
         }
 
-        ArrayList<String> books = Helper.readBooks(Helper.INDEXES_TABLES_PATH);
+        ArrayList<String> books = GenericHelper.readBooks(GenericHelper.INDEXES_TABLES_PATH);
         futuresMatched = new ArrayList<>();
 
         int asciiCode = (pattern.toUpperCase().charAt(0) - 65);

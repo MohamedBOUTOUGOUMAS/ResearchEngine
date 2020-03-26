@@ -1,15 +1,15 @@
-package service.utils;
+package helpers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import topics.Book;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
-public class Helper {
+public class GenericHelper {
 
     public static String BOOKS_PATH = "books-master";
     public static String BOOKS_CLEAN_PATH = "books";
@@ -70,7 +70,7 @@ public class Helper {
 
     public static boolean decorateBookWithTitle(String ligne, Book book, boolean findTitle) {
         if (!findTitle) {
-            String title = Helper.getTitleFromFile(ligne);
+            String title = GenericHelper.getTitleFromFile(ligne);
             if (title != null) {
                 book.title = title;
                 return true;
@@ -81,7 +81,7 @@ public class Helper {
 
     public static boolean decorateBookWithAuthor(String ligne, Book book, boolean findAuthor) {
         if (!findAuthor) {
-            String autor = Helper.getAuthorFromFile(ligne);
+            String autor = GenericHelper.getAuthorFromFile(ligne);
             if (autor != null) {
                 book.author = autor;
                 return true;
@@ -92,7 +92,7 @@ public class Helper {
 
     public static boolean decorateBookWithReleaseDate(String ligne, Book book, boolean findReleaseDate) {
         if (!findReleaseDate) {
-            String releaseDate = Helper.getReleaseDateFromFile(ligne);
+            String releaseDate = GenericHelper.getReleaseDateFromFile(ligne);
             if (releaseDate != null) {
                 book.releaseDate = releaseDate;
                 return true;

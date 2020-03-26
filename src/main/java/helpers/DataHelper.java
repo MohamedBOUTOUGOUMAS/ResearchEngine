@@ -1,15 +1,16 @@
-package service.utils;
+package helpers;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import topics.Book;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CleanData {
+public class DataHelper {
 
     private static void booksToIndex() {
-        ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+        ArrayList<String> files = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
         for (String file : files) {
             System.out.println(file);
             storeIndexTable(getAllWordsFromFile(file), file);
@@ -18,7 +19,7 @@ public class CleanData {
 
     private static void storeIndexTable(Map<String, Integer> map, String file) {
         try {
-            FileWriter fw = new FileWriter(Helper.BOOKS_INDEX + "/" + file);
+            FileWriter fw = new FileWriter(GenericHelper.BOOKS_INDEX + "/" + file);
             BufferedWriter bw = new BufferedWriter(fw);
             for (String word : map.keySet()) {
                 bw.write(word + " " + map.get(word) + "\n");
@@ -35,7 +36,7 @@ public class CleanData {
         String ligne;
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + filename));
+            BufferedReader reader = new BufferedReader(new FileReader(GenericHelper.BOOKS_PATH + "/" + filename));
             while ((ligne = reader.readLine()) != null) {
                 if (!ligne.equals("") && !ligne.equals("\n")) {
                     String[] array = ligne.split("[^a-zA-Z]");
@@ -60,16 +61,16 @@ public class CleanData {
     }
 
     public static void createBooks(){
-        List<String> books = Helper.readBooks(Helper.BOOKS_PATH);
+        List<String> books = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
         int i = 1;
         for (String book: books){
             System.out.println("i "+i);
-            if(i > Helper.NB_BOOKS) break;
+            if(i > GenericHelper.NB_BOOKS) break;
             Book b = Book.getEmptyBook(book);
             if (b.fileName != null && b.author != null && b.title != null && b.releaseDate != null){
                 try{
-                    InputStream input = new FileInputStream(Helper.BOOKS_PATH+"/"+book);
-                    OutputStream output = new FileOutputStream(Helper.BOOKS_CLEAN_PATH+"/"+book);
+                    InputStream input = new FileInputStream(GenericHelper.BOOKS_PATH+"/"+book);
+                    OutputStream output = new FileOutputStream(GenericHelper.BOOKS_CLEAN_PATH+"/"+book);
                     IOUtils.copy(input, output);
                     i++;
                 }catch (Exception e){
@@ -81,10 +82,10 @@ public class CleanData {
     public static boolean hasTitle(String fileName) {
         BufferedReader lecteurAvecBuffer;
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(GenericHelper.BOOKS_PATH + "/" + fileName));
             String line;
             while ((line = lecteurAvecBuffer.readLine()) != null) {
-                if (Helper.getTitleFromFile(line) != null) return true;
+                if (GenericHelper.getTitleFromFile(line) != null) return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,7 +94,7 @@ public class CleanData {
     }
 
     public static Set<String> rejectedFiles() {
-        File repertoire = new File(Helper.BOOKS_PATH);
+        File repertoire = new File(GenericHelper.BOOKS_PATH);
         ArrayList<String> files = (ArrayList<String>) Arrays.stream(repertoire.list()).collect(Collectors.toList());
         Set<String> rejectedFiles = files.stream()
                 .filter(file -> !hasTitle(file))

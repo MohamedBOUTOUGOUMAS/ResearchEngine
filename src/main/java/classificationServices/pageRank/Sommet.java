@@ -1,4 +1,4 @@
-package service.pageRank;
+package classificationServices.pageRank;
 
 import java.util.Map;
 

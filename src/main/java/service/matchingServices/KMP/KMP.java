@@ -1,4 +1,4 @@
-package service.KMP;
+package service.matchingServices.KMP;
 
 public class KMP {
 

@@ -1,13 +1,12 @@
-package multiThreading;
+package service.multiThreading;
 
-import db.Database;
 import org.unix4j.Unix4j;
 import org.unix4j.line.Line;
-import service.AEF.RegEx;
-import service.Egrep;
-import service.utils.Book;
-import service.utils.Helper;
-import service.utils.ResearchResult;
+import service.matchingServices.AEF.RegEx;
+import service.matchingServices.EgrepService;
+import topics.Book;
+import helpers.GenericHelper;
+import topics.ResearchResult;
 
 import java.io.File;
 import java.util.List;
@@ -36,12 +35,12 @@ public class MatchingBook implements Callable<ResearchResult> {
     @Override
     public ResearchResult call() {
 
-        if (Helper.isRegEx(word) && retenue == null) {
-            File file = new File(Helper.BOOKS_PATH+"/"+fileName);
+        if (GenericHelper.isRegEx(word) && retenue == null) {
+            File file = new File(GenericHelper.BOOKS_PATH+"/"+fileName);
             List<Line> lines = Unix4j.grep(word, file).toLineList();
             return new ResearchResult(Book.getEmptyBook(fileName), lines.size());
         }
-        if (retenue != null) return Egrep.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
-        return Egrep.matchAllWords(word, fileName, regEx);
+        if (retenue != null) return EgrepService.matchAllWordsFast(word, fileName, firstLetter, regEx, retenue);
+        return EgrepService.matchAllWords(word, fileName, regEx);
     }
 }

@@ -6,14 +6,12 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Projections;
 import controller.HomeController;
 import org.bson.Document;
-import service.utils.Book;
-import service.utils.Helper;
-import service.utils.ResearchResult;
+import topics.Book;
+import helpers.GenericHelper;
+import topics.ResearchResult;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 import static com.mongodb.client.model.Projections.exclude;
@@ -51,8 +49,8 @@ public class Database {
     }
 
     public static List<ResearchResult> matchDB(int firstLetter, String pattern){
-        MongoDatabase dbBook = Database.getDB(Helper.getFileName(DBStatic.mongo_index));
-        MongoCollection<Document> collection = dbBook.getCollection(Helper.COLLECTION+firstLetter);
+        MongoDatabase dbBook = Database.getDB(GenericHelper.getFileName(DBStatic.mongo_index));
+        MongoCollection<Document> collection = dbBook.getCollection(GenericHelper.COLLECTION+firstLetter);
         FindIterable<Document> res = collection.find(Filters.eq("words.word", pattern))
                 .projection(new BasicDBObject("words.word.$", 1).append("fileName", 1).append("_id", 0));
         List<ResearchResult> l = new ArrayList<>();

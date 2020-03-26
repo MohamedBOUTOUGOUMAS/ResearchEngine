@@ -1,20 +1,20 @@
-package service;
+package service.matchingServices;
 
-import service.AEF.RegEx;
-import service.KMP.KMP;
-import service.utils.Book;
-import service.utils.Helper;
-import service.utils.ResearchResult;
+import service.matchingServices.AEF.RegEx;
+import service.matchingServices.KMP.KMP;
+import topics.Book;
+import helpers.GenericHelper;
+import topics.ResearchResult;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
 
-public class Egrep {
+public class EgrepService {
 
     public static ResearchResult matchAllWords(String word, String fileName, RegEx regEx) {
-        String filePath = Helper.BOOKS_PATH + "/" + fileName;
+        String filePath = GenericHelper.BOOKS_PATH + "/" + fileName;
         int linesMatched = 0;
 
         Book book = new Book(fileName);
@@ -28,10 +28,10 @@ public class Egrep {
             int l = 1;
             while ((ligne = lecteurAvecBuffer.readLine()) != null) {
 
-                if (!findTitle) findTitle = Helper.decorateBookWithTitle(ligne, book, findTitle);
-                if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(ligne, book, findAuthor);
+                if (!findTitle) findTitle = GenericHelper.decorateBookWithTitle(ligne, book, findTitle);
+                if (!findAuthor) findAuthor = GenericHelper.decorateBookWithAuthor(ligne, book, findAuthor);
                 if (!findReleaseDate)
-                    findReleaseDate = Helper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
+                    findReleaseDate = GenericHelper.decorateBookWithReleaseDate(ligne, book, findReleaseDate);
 
                 if (regEx != null)
                     linesMatched += matchLineWithAutomat(ligne, l, regEx);
@@ -61,7 +61,7 @@ public class Egrep {
         BufferedReader lecteurAvecBuffer;
         String ligne;
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.INDEXES_TABLES_PATH + "/" + fileName + "/" + firstLetter + ".txt"));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(GenericHelper.INDEXES_TABLES_PATH + "/" + fileName + "/" + firstLetter + ".txt"));
             while ((ligne = lecteurAvecBuffer.readLine()) != null) {
                 if (!ligne.equals("") && !ligne.equals("\n")) {
                     String[] ar = ligne.split(" ");

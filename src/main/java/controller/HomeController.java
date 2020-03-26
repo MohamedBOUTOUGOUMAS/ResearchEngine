@@ -1,31 +1,31 @@
 package controller;
 
 import db.Metadata;
-import multiThreading.ThreadPool;
-import service.utils.Book;
-import service.utils.Helper;
-import service.utils.ResearchResult;
+import service.multiThreading.ThreadPool;
+import topics.Book;
+import helpers.GenericHelper;
+import topics.ResearchResult;
 import org.springframework.web.bind.annotation.*;
-import service.utils.Serialization;
+import topics.Serialization;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "https://research-engine-client.herokuapp.com")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HomeController {
     static Set<String> autoComplete;
     static List<ResearchResult> results = null;
     static String pattern = null;
     public static Map<String, Float> pageRang =
-            (Map<String, Float>) Serialization.deserialize(Helper.PAGE_RANK_MAP, "map");
+            (Map<String, Float>) Serialization.deserialize(GenericHelper.PAGE_RANK_MAP, "map");
 
     public static Map<String, Float> betweennes =
-            (Map<String, Float>) Serialization.deserialize(Helper.BETWEENNES_MAP, "map");
+            (Map<String, Float>) Serialization.deserialize(GenericHelper.BETWEENNES_MAP, "map");
 
     public static Map<String, List<String>> suggestions =
-            (Map<String, List<String>>) Serialization.deserialize(Helper.SUGGESTIONS_MAP, "map");
+            (Map<String, List<String>>) Serialization.deserialize(GenericHelper.SUGGESTIONS_MAP, "map");
 
     @RequestMapping("/")
     public String index() {
@@ -75,8 +75,8 @@ public class HomeController {
     @PostMapping("/advencedSearch")
     public List<ResearchResult> getAdvencedSearch(@RequestBody String body) {
 
-        String pattern = Helper.getPatternFromJson(body);
-        boolean speedMode = Helper.getFastFromJson(body);
+        String pattern = GenericHelper.getPatternFromJson(body);
+        boolean speedMode = GenericHelper.getFastFromJson(body);
 
         List<ResearchResult> fromCache = getFromCache(pattern);
         if (fromCache != null) return fromCache;

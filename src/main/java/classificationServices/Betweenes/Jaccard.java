@@ -1,7 +1,7 @@
-package service.Betweenes;
+package classificationServices.Betweenes;
 
-import service.utils.CleanData;
-import service.utils.Helper;
+import helpers.DataHelper;
+import helpers.GenericHelper;
 
 import java.io.*;
 import java.util.*;
@@ -13,7 +13,7 @@ public class Jaccard {
     private static void createJaccardGraph() {
         Map<String, Map<String, Integer>> mapFiles = new HashMap<>();
         Map<String, Double> distanceMap = new HashMap<>();
-        ArrayList<String> files = Helper.readBooks(Helper.BOOKS_PATH);
+        ArrayList<String> files = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
         FileWriter fw;
         BufferedWriter bw;
         String file1;
@@ -29,11 +29,11 @@ public class Jaccard {
                 if (mapFiles.containsKey(file1))
                     words1 = mapFiles.get(file1);
                 else {
-                    words1 = CleanData.getAllWordsFromFile(file1);
+                    words1 = DataHelper.getAllWordsFromFile(file1);
                     mapFiles.put(file1, words1);
                 }
 
-                fw = new FileWriter(Helper.JACCARD_PATH +"/"+file1);
+                fw = new FileWriter(GenericHelper.JACCARD_PATH +"/"+file1);
                 bw = new BufferedWriter(fw);
                 for (int j = 0; j < files.size(); j++) {
                     if(i==j) continue;
@@ -43,7 +43,7 @@ public class Jaccard {
                     if (mapFiles.containsKey(file2))
                         words2 = mapFiles.get(file2);
                     else {
-                        words2 = CleanData.getAllWordsFromFile(file2);
+                        words2 = DataHelper.getAllWordsFromFile(file2);
                         mapFiles.put(file2, words2);
                     }
 
@@ -103,7 +103,7 @@ public class Jaccard {
     public static Map<String, Double> getDistanceFromJaccardGraph(String filename) {
         Map<String, Double> res = new HashMap<>();
         try {
-            FileReader fileReader = new FileReader(Helper.JACCARD_PATH + "/" + filename);
+            FileReader fileReader = new FileReader(GenericHelper.JACCARD_PATH + "/" + filename);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             res = bufferedReader.lines()

@@ -1,8 +1,12 @@
-package service.AEF;
+package tests;
+
+import service.matchingServices.AEF.AefDeterministe;
+import service.matchingServices.AEF.Automat;
+import service.matchingServices.AEF.RegExTree;
 
 import java.util.ArrayList;
 
-public class Test {
+public class AEFTests {
 
     static final int CONCAT = 0xC04CA7;
     static final int ETOILE = 0xE7011E;

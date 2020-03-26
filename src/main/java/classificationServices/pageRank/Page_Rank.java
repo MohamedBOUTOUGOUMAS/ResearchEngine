@@ -1,13 +1,13 @@
-package service.pageRank;
+package classificationServices.pageRank;
 
-import service.utils.Helper;
+import helpers.GenericHelper;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import static service.utils.Serialization.serialize;
+import static topics.Serialization.serialize;
 
 public class Page_Rank {
 
@@ -21,10 +21,10 @@ public class Page_Rank {
     public static void readFile() {
         BufferedReader lecteurAvecBuffer;
         String ligne;
-        ArrayList<String> jaccard = Helper.readBooks(Helper.JACCARD_PATH);
+        ArrayList<String> jaccard = GenericHelper.readBooks(GenericHelper.JACCARD_PATH);
         try {
             for (String book : jaccard) {
-                lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.JACCARD_PATH + "/" + book));
+                lecteurAvecBuffer = new BufferedReader(new FileReader(GenericHelper.JACCARD_PATH + "/" + book));
                 while ((ligne = lecteurAvecBuffer.readLine()) != null) {
                     String[] aretes;
                     aretes = ligne.split(" ", 2);

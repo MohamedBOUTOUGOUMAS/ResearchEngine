@@ -1,4 +1,6 @@
-package service.utils;
+package topics;
+
+import helpers.GenericHelper;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,15 +23,15 @@ public class Book {
         BufferedReader lecteurAvecBuffer;
         Book book = new Book(fileName);
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(GenericHelper.BOOKS_PATH + "/" + fileName));
             String line;
             boolean findTitle = false;
             boolean findAuthor = false;
             boolean findReleaseDate = false;
             while ((line = lecteurAvecBuffer.readLine()) != null) {
-                if (!findTitle) findTitle = Helper.decorateBookWithTitle(line, book, findTitle);
-                if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(line, book, findAuthor);
-                if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(line, book, findReleaseDate);
+                if (!findTitle) findTitle = GenericHelper.decorateBookWithTitle(line, book, findTitle);
+                if (!findAuthor) findAuthor = GenericHelper.decorateBookWithAuthor(line, book, findAuthor);
+                if (!findReleaseDate) findReleaseDate = GenericHelper.decorateBookWithReleaseDate(line, book, findReleaseDate);
                 book.content.add(line);
             }
         } catch (IOException e) {
@@ -42,15 +44,15 @@ public class Book {
         BufferedReader lecteurAvecBuffer;
         Book book = new Book(fileName);
         try {
-            lecteurAvecBuffer = new BufferedReader(new FileReader(Helper.BOOKS_PATH + "/" + fileName));
+            lecteurAvecBuffer = new BufferedReader(new FileReader(GenericHelper.BOOKS_PATH + "/" + fileName));
             String line;
             boolean findTitle = false;
             boolean findAuthor = false;
             boolean findReleaseDate = false;
             while ((line = lecteurAvecBuffer.readLine()) != null) {
-                if (!findTitle) findTitle = Helper.decorateBookWithTitle(line, book, findTitle);
-                if (!findAuthor) findAuthor = Helper.decorateBookWithAuthor(line, book, findAuthor);
-                if (!findReleaseDate) findReleaseDate = Helper.decorateBookWithReleaseDate(line, book, findReleaseDate);
+                if (!findTitle) findTitle = GenericHelper.decorateBookWithTitle(line, book, findTitle);
+                if (!findAuthor) findAuthor = GenericHelper.decorateBookWithAuthor(line, book, findAuthor);
+                if (!findReleaseDate) findReleaseDate = GenericHelper.decorateBookWithReleaseDate(line, book, findReleaseDate);
                 if (findTitle && findAuthor && findReleaseDate) break;
             }
         } catch (IOException e) {
