@@ -4,7 +4,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import db.DBStatic;
 import db.Database;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import topics.Book;
 
 import java.io.*;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class IndexingHelper {
 
-    public static void makeMap() {
+    public static void createIndex() {
 
         ArrayList<String> files = GenericHelper.readBooks(GenericHelper.BOOKS_PATH);
 
@@ -102,14 +104,22 @@ public class IndexingHelper {
         }
     }
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-        //String txt = "123.txt.utf-8";
+    public static void addDBIndexes(){
+        MongoDatabase dbBook = Database.getDB(GenericHelper.getFileName(DBStatic.mongo_index));
+        for (int i = 0; i < 26; i++) {
+            MongoCollection<Document> collection = Database.getCollectionFromDB(dbBook, GenericHelper.COLLECTION+i);
+            collection.createIndex(new Document("words.word", "text"));
+        }
+        MongoCollection<Document> collection = Database.getCollectionFromDB(dbBook, GenericHelper.METABOOKS);
+        collection.createIndex(new Document("title", "text").append("author", "text"));
+        System.out.println("End");
+    }
 
-        //System.out.println(Helper.getFileName(txt));
-        //makeMap();
+    public static void main(String[] args) {
+        createIndex();
         //makeDB();
-        addMetadataToDB();
+        //addMetadataToDB();
+        //addDBIndexes();
     }
 
 }

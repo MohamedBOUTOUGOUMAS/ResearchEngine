@@ -13,6 +13,7 @@ public class Book {
     public String fileName;
     public String releaseDate;
     public ArrayList<String> content;
+    public String language;
 
     public Book(String fileName) {
         this.fileName = fileName;
@@ -49,11 +50,13 @@ public class Book {
             boolean findTitle = false;
             boolean findAuthor = false;
             boolean findReleaseDate = false;
+            boolean findLanguage = false;
             while ((line = lecteurAvecBuffer.readLine()) != null) {
                 if (!findTitle) findTitle = GenericHelper.decorateBookWithTitle(line, book, findTitle);
                 if (!findAuthor) findAuthor = GenericHelper.decorateBookWithAuthor(line, book, findAuthor);
                 if (!findReleaseDate) findReleaseDate = GenericHelper.decorateBookWithReleaseDate(line, book, findReleaseDate);
-                if (findTitle && findAuthor && findReleaseDate) break;
+                if (!findLanguage) findLanguage = GenericHelper.decorateBookWithLanguage(line, book, findLanguage);
+                if (findTitle && findAuthor && findReleaseDate && findLanguage) break;
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -67,10 +67,10 @@ public class DataHelper {
             System.out.println("i "+i);
             if(i > GenericHelper.NB_BOOKS) break;
             Book b = Book.getEmptyBook(book);
-            if (b.fileName != null && b.author != null && b.title != null && b.releaseDate != null){
+            if (b.fileName != null && b.author != null && b.title != null && b.releaseDate != null && b.language != null && b.language.equals("English")){
                 try{
                     InputStream input = new FileInputStream(GenericHelper.BOOKS_PATH+"/"+book);
-                    OutputStream output = new FileOutputStream(GenericHelper.BOOKS_CLEAN_PATH+"/"+book);
+                    OutputStream output = new FileOutputStream("books/"+book);
                     IOUtils.copy(input, output);
                     i++;
                 }catch (Exception e){

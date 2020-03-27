@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class GenericHelper {
 
     public static String BOOKS_PATH = "books-master";
-    public static String BOOKS_CLEAN_PATH = "books";
     public static String BOOKS_INDEX = "index";
     public static String JACCARD_PATH = "jaccard";
     public static String JACCARD_MAP = "jaccard-map";
@@ -27,7 +26,6 @@ public class GenericHelper {
     public static String FLOYD_WARSHALL = "floyd-warshall";
     public static String COLLECTION = "Collection_";
     public static String METABOOKS = "metaBooks";
-
     public static String BETWEENNES_MAP = "betweennes-map";
     public static String SUGGESTIONS_MAP = "suggestions-map";
 
@@ -74,6 +72,14 @@ public class GenericHelper {
         return null;
     }
 
+    private static String getLanguageFromFile(String line) {
+        if (line.contains("Language: ")) {
+            String[] array = line.split("Language: ");
+            return array[1];
+        }
+        return null;
+    }
+
     public static boolean decorateBookWithTitle(String ligne, Book book, boolean findTitle) {
         if (!findTitle) {
             String title = GenericHelper.getTitleFromFile(ligne);
@@ -101,6 +107,17 @@ public class GenericHelper {
             String releaseDate = GenericHelper.getReleaseDateFromFile(ligne);
             if (releaseDate != null) {
                 book.releaseDate = releaseDate;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean decorateBookWithLanguage(String line, Book book, boolean findLanguage) {
+        if (!findLanguage) {
+            String language = GenericHelper.getLanguageFromFile(line);
+            if (language != null) {
+                book.language = language;
                 return true;
             }
         }
@@ -146,5 +163,4 @@ public class GenericHelper {
 
         return results;
     }
-
 }
